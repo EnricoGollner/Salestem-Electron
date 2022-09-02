@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Photon</title>
+    <meta charset="utf-8">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/photon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" rel="stylesheet">
+
+
+    <!-- Electron Javascript -->
+    <!-- <script src="app.js" charset="utf-8"></script> -->
+</head>
+
+<body>
+    <div class="window">
+        <header class="toolbar toolbar-header">
+            <h1 class="title">Loja XYZ</h1>
+            <div class="toolbar-actions">
+                <div class="btn-group">
+                    <button class="btn btn-default">
+                        <span class="icon icon-home"></span>
+                    </button>
+                    <button class="btn btn-default">
+                        <span class="icon icon-folder"></span>
+                    </button>
+                    <button class="btn btn-default active">
+                        <span class="icon icon-cloud"></span>
+                    </button>
+                    <button class="btn btn-default">
+                        <span class="icon icon-popup"></span>
+                    </button>
+                    <button class="btn btn-default">
+                        <span class="icon icon-shuffle"></span>
+                    </button>
+                </div>
+
+                <button class="btn btn-default">
+                    <span class="icon icon-home icon-text"></span>
+                    Filters
+                </button>
+
+                <button class="btn btn-default btn-dropdown pull-right">
+                    <span class="icon icon-megaphone"></span>
+                </button>
+            </div>
+        </header>
+        <div class="window-content">
+            <div class="pane-group">
+                <div class="pane-sm sidebar">Lorem ipsum</div>
+                <div class="pane">
+                    <button type="button" @click="createClient()" class="btn btn-primary">Cadastro de Cliente</button>
+                    <a href="index.html" class="btn btn-primary">Clientes</a>
+                    <a href="produtos.html" class="btn btn-primary">Produtos</a>
+                    <a href="vendas.html" class="btn btn-primary">Vendas</a>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="cliente in clientes">
+                                <td>{{cliente.nome}}</td>
+                                <td>{{cliente.cpf}}</td>
+                                <td>{{cliente.telefone}}</td>
+                                <td type="button" class="btn btn-primary" @click="editClient(cliente)">Editar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer class="toolbar toolbar-footer">
+            <h1 class="title">Desenvolvido por Enrico Gollner</h1>
+        </footer>
+    </div>
+    <div id="modal" v-if="openModal">
+        <div class="wrap">
+            <form id="cadastro-cliente" action="" class="pane-body">
+                <h3 v-if="mode == 'cadastro'">Cadastro de Cliente</h3>
+                <h3 v-if="mode == 'edicao'">Editar Cliente</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="nome" v-model="client.nome" placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="cpf" v-model="client.cpf" placeholder="CPF">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="telefone" v-model="client.telefone" placeholder="Telefone">
+                </div>
+                <button class="btn btn-positive" @click="clientStoreOrUpdate" type="button">Salvar</button>
+                <button type="button" class="btn btn-negative" @click="openModal=false">Fechar</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    let read = require('read-file-utf8')
+    let loki = require('lokijs')  // Mesmo que "import"  
+    let db = new loki('db.json')
+    let data = read(__dirname + '/db.json')
+    db.loadJSON(data)
+    window.Vue = require('vue')
+    //let clientes = db.addCollection('Clientes')
+    let clientes = db.getCollection('Clientes')
+    new Vue({
+        el: 'body',
+        data: {
+            clientes: [],
+            mode: '',
+            client:{
+                nome:'',
+                cpf:'',
+                telefone:''
+            },
+            openModal: false  // Começa fechado
+        },
+        ready: function(){
+            this.clientes = clientes.data;
+            console.log(this.clientes)
+        },
+        methods:{
+            editClient: function(client){
+                this.mode = 'edicao'
+                this.openModal = true
+                this.client = client
+            },
+            createClient: function(){
+                this.mode = 'cadastro'
+                this.openModal = true
+                this.client={ // Reinicializando os dados por precaução
+                    nome:'',
+                    cpf:'',
+                    telefone:''
+                }
+            },
+            clientStoreOrUpdate: function(){
+                if(typeof this.client.$loki != 'undefined'){
+                    clientes.update(this.client)
+                } else{
+                    clientes.insert(this.client)
+                }
+                db.save()
+                this.openModal = false
+            }
+        }
+    })
+</script>
+
+</html>
