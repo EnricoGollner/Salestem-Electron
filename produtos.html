@@ -46,7 +46,22 @@
         </header>
         <div class="window-content">
             <div class="pane-group">
-                <div class="pane-sm sidebar">Lorem ipsum</div>
+                <div class="pane-sm sidebar">
+                    <nav class="nav-group">
+                        <a class="nav-group-item active" href="produtos.html">
+                            <span class="icon icon-home"></span>
+                            Produtos
+                        </a>
+                        <a class="nav-group-item" href="vendas.html">
+                            <span class="icon icon-download"></span>
+                            Vendas
+                        </a>
+                        <a class="nav-group-item" href="index.html">
+                            <span class="icon icon-folder"></span>
+                            Clientes
+                        </a>
+                    </nav>
+                </div>
                 <div class="pane">
                     <button type="button" @click="createProduct()" class="btn btn-primary">Cadastro de Produto</button>
                     <a href="index.html" class="btn btn-primary">Clientes</a>
@@ -66,7 +81,7 @@
                                 <td>{{produto.nome}}</td>
                                 <td>{{produto.preco}}</td>
                                 <td>{{produto.qtd}}</td>
-                                <td type="button" class="btn btn-primary" @click="editProduto(produto)">Editar</td>
+                                <td type="button" class="btn btn-primary" @click="editProduct(produto)">Editar</td>
                             </tr>
                         </tbody>
                     </table>
@@ -74,7 +89,7 @@
             </div>
         </div>
         <footer class="toolbar toolbar-footer">
-            <h1 class="title">Desenvolvido por Enrico Gollner</h1>
+            <h1 class="title">Desenvolvido por SwitchCase SoftwareHouse</h1>
         </footer>
     </div>
     <div id="modal" v-if="openModal">
@@ -107,6 +122,7 @@
     db.loadJSON(data)
     window.Vue = require('vue')
     // let produtos = db.addCollection('produtos')
+
     let produtos = db.getCollection('produtos')
     db.save()
     new Vue({

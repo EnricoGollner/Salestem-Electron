@@ -46,10 +46,25 @@
         </header>
         <div class="window-content">
             <div class="pane-group">
-                <div class="pane-sm sidebar">Lorem ipsum</div>
+                <div class="pane-sm sidebar">
+                    <nav class="nav-group">
+                        <a class="nav-group-item active" href="produtos.html">
+                            <span class="icon icon-home"></span>
+                            Produtos
+                        </a>
+                        <a class="nav-group-item" href="vendas.html">
+                            <span class="icon icon-download"></span>
+                            Vendas
+                        </a>
+                        <a class="nav-group-item" href="index.html">
+                            <span class="icon icon-folder"></span>
+                            Clientes
+                        </a>
+                    </nav>
+                </div>
                 <div class="pane">
                     <button type="button" @click="createSale()" class="btn btn-primary">Cadastro de Vendas</button>
-
+                    <a href="index.html" class="btn btn-primary">Clientes</a>
                     <a href="produtos.html" class="btn btn-primary">Produtos</a>
                     <a href="vendas.html" class="btn btn-primary">Vendas</a>
                     <table class="table table-striped">
