@@ -2,12 +2,12 @@
 <html>
 
 <head>
-    <title>Photon</title>
+    <title>Sistema de Vendas</title>
     <meta charset="utf-8">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/photon.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="Public/css/Photon/photon.css" rel="stylesheet">
+    <link rel="stylesheet" href="Public/css/style.css" rel="stylesheet">
 
 
     <!-- Electron Javascript -->
@@ -68,8 +68,8 @@
                 <div class="pane">
                     <button type="button" @click="createClient()" class="btn btn-primary">Cadastro de Cliente</button>
                     <a href="index.html" class="btn btn-primary">Clientes</a>
-                    <a href="produtos.html" class="btn btn-primary">Produtos</a>
-                    <a href="vendas.html" class="btn btn-primary">Vendas</a>
+                    <a href="./Views/produtos.html" class="btn btn-primary">Produtos</a>
+                    <a href="./Views/vendas.html" class="btn btn-primary">Vendas</a>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -92,7 +92,7 @@
             </div>
         </div>
         <footer class="toolbar toolbar-footer">
-            <h1 class="title">Desenvolvido por Enrico Gollner</h1>
+            <h1 class="title">Desenvolvido por Switch SoftwareHouse</h1>
         </footer>
     </div>
     <div id="modal" v-if="openModal">
