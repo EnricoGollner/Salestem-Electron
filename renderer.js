@@ -7,7 +7,7 @@
 
 const loki = require('lokijs')  // Mesmo que "import"
 let db = new loki('db.json')
-let clientes = db.addCollection('Clientes')  // O mesmo que uma tabela de banco de dados
+let clientes = db.addCollection('Clientes')  // O mesmo que criar uma tabela de banco de dados
 /* clientes.insert({
     nome: 'Enrico',
     email: 'contato@gmail.com'
