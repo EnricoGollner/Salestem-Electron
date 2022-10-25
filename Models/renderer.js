@@ -6,7 +6,7 @@
 // process.
 
 const loki = require('lokijs')  // Mesmo que "import"
-let db = new loki('db.json')
+let db = new loki('Views/db.json')
 let clientes = db.addCollection('Clientes')  // O mesmo que criar uma tabela de banco de dados
 /* clientes.insert({
     nome: 'Enrico',
@@ -15,7 +15,7 @@ let clientes = db.addCollection('Clientes')  // O mesmo que criar uma tabela de 
 db.save()
 
 window.onload(
-    document.querySelector('#salvar').addEventListener('click', (e)=>{
+    document.querySelector('#salvar').addEventListener('click', (e) => {
         e.preventDefault()
         let data = {
             nome: document.querySelector('#nome').value,

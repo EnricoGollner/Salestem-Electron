@@ -2,13 +2,12 @@
 <html>
 
 <head>
-    <title>Sistema de Vendas</title>
+    <title>Clientes</title>
     <meta charset="utf-8">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="Public/css/Photon/photon.css" rel="stylesheet">
-    <link rel="stylesheet" href="Public/css/style.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="../Public/css/Photon/photon.css" rel="stylesheet">
+    <link rel="stylesheet" href="../Public/css/style.css" rel="stylesheet">
 
     <!-- Electron Javascript -->
     <!-- <script src="app.js" charset="utf-8"></script> -->
@@ -20,13 +19,13 @@
             <h1 class="title">Loja XYZ</h1>
             <div class="toolbar-actions">
                 <div class="btn-group">
-                    <button class="btn btn-default">
+                    <button class="btn btn-default active">
                         <span class="icon icon-home"></span>
                     </button>
                     <button class="btn btn-default">
                         <span class="icon icon-folder"></span>
                     </button>
-                    <button class="btn btn-default active">
+                    <button class="btn btn-default">
                         <span class="icon icon-cloud"></span>
                     </button>
                     <button class="btn btn-default">
@@ -51,25 +50,25 @@
             <div class="pane-group">
                 <div class="pane-sm sidebar">
                     <nav class="nav-group">
-                        <a class="nav-group-item active" href="produtos.html">
+                        <a class="nav-group-item active" href="index.html">
                             <span class="icon icon-home"></span>
+                            Clientes
+                        </a>
+                        <a class="nav-group-item" href="produtos.html">
+                            <span class="icon icon-folder"></span>
                             Produtos
                         </a>
                         <a class="nav-group-item" href="vendas.html">
                             <span class="icon icon-download"></span>
                             Vendas
                         </a>
-                        <a class="nav-group-item" href="index.html">
-                            <span class="icon icon-folder"></span>
-                            Clientes
-                        </a>
                     </nav>
                 </div>
                 <div class="pane">
                     <button type="button" @click="createClient()" class="btn btn-primary">Cadastro de Cliente</button>
                     <a href="index.html" class="btn btn-primary">Clientes</a>
-                    <a href="./Views/produtos.html" class="btn btn-primary">Produtos</a>
-                    <a href="./Views/vendas.html" class="btn btn-primary">Vendas</a>
+                    <a href="produtos.html" class="btn btn-primary">Produtos</a>
+                    <a href="vendas.html" class="btn btn-primary">Vendas</a>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -115,67 +114,5 @@
         </div>
     </div>
 </body>
-<script>
-    let read = require('read-file-utf8')
-    let loki = require('lokijs')  // Mesmo que "import"  
-    let db = new loki('db.json')
-    let fileExists = require('file-exists')
-    let data = {}
-    if(fileExists(__dirname + '/db.json')){
-        data = read(__dirname + '/db.json')
-        db.loadJSON(data)
-    } else{
-        db.addCollection('vendas')
-        db.addCollection('Clientes')
-        db.addCollection('produtos')
-        db.save()
-    }
-    window.Vue = require('vue')
-    
-
-    let clientes = db.getCollection('Clientes')
-    new Vue({
-        el: 'body',
-        data: {
-            clientes: [],
-            mode: '',
-            client:{
-                nome:'',
-                cpf:'',
-                telefone:''
-            },
-            openModal: false  // Começa fechado
-        },
-        ready: function(){
-            this.clientes = clientes.data;
-            console.log(this.clientes)
-        },
-        methods:{
-            editClient: function(client){
-                this.mode = 'edicao'
-                this.openModal = true
-                this.client = client
-            },
-            createClient: function(){
-                this.mode = 'cadastro'
-                this.openModal = true
-                this.client={ // Reinicializando os dados por precaução
-                    nome:'',
-                    cpf:'',
-                    telefone:''
-                }
-            },
-            clientStoreOrUpdate: function(){
-                if(typeof this.client.$loki != 'undefined'){
-                    clientes.update(this.client)
-                } else{
-                    clientes.insert(this.client)
-                }
-                db.save()
-                this.openModal = false
-            }
-        }
-    })
-</script>
-
+<script src="../Controller/clientes.js"></script>
 </html>
