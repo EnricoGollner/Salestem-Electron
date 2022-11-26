@@ -17,3 +17,9 @@
     margin-top: 10%;
     background-color: #fff;
 }
+.cadastro {
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: #f6f6f4;
+    right: 40px;
+}

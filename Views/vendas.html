@@ -9,40 +9,14 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../Public/css/Photon/photon.css" rel="stylesheet">
     <link rel="stylesheet" href="../Public/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
 </head>
 
 <body>
     <div class="window">
         <header class="toolbar toolbar-header">
             <h1 class="title">Loja XYZ</h1>
-            <div class="toolbar-actions">
-                <div class="btn-group">
-                    <button class="btn btn-default">
-                        <span class="icon icon-home"></span>
-                    </button>
-                    <button class="btn btn-default">
-                        <span class="icon icon-folder"></span>
-                    </button>
-                    <button class="btn btn-default active">
-                        <span class="icon icon-cloud"></span>
-                    </button>
-                    <button class="btn btn-default">
-                        <span class="icon icon-popup"></span>
-                    </button>
-                    <button class="btn btn-default">
-                        <span class="icon icon-shuffle"></span>
-                    </button>
-                </div>
-
-                <button class="btn btn-default">
-                    <span class="icon icon-home icon-text"></span>
-                    Filters
-                </button>
-
-                <button class="btn btn-default btn-dropdown pull-right">
-                    <span class="icon icon-megaphone"></span>
-                </button>
-            </div>
         </header>
         <div class="window-content">
             <div class="pane-group">
@@ -63,10 +37,9 @@
                     </nav>
                 </div>
                 <div class="pane">
-                    <button type="button" @click="createSale()" class="btn btn-primary">Cadastro de Vendas</button>
-                    <a href="index.html" class="btn btn-primary">Clientes</a>
-                    <a href="produtos.html" class="btn btn-primary">Produtos</a>
-                    <a href="vendas.html" class="btn btn-primary">Vendas</a>
+                    <div class="cadastro">
+                        <button type="button" @click="createSale()" class="btn btn-dark">Cadastro de Vendas</button>
+                    </div>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -75,6 +48,7 @@
                                 <th>Preço Un.</th>
                                 <th>Qtd</th>
                                 <th>Total</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,8 +57,8 @@
                                 <td>{{venda.produto}}</td>
                                 <td>{{venda.preco}}</td>
                                 <td>{{venda.qtd}}</td>
-                                <td>{{venda.qtd*venda.preco}}</td>
-                                <td type="button" class="btn btn-primary" @click="editSale(venda)">Editar</td>
+                                <td>{{venda.qtd * venda.preco}}</td>
+                                <td type="button" class="btn btn-dark" @click="editSale(venda)">Editar</td>
                             </tr>
                         </tbody>
                     </table>
