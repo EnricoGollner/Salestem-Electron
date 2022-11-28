@@ -20,7 +20,8 @@ let read = require('read-file-utf8')
                 cliente: '',
                 produto: '',
                 preco: 0,
-                qtd: 1
+                qtd: 1,
+                modo: 'Credito'
             }
         },
         ready: function () {
@@ -42,7 +43,8 @@ let read = require('read-file-utf8')
                     cliente: '',
                     produto: '',
                     preco: 0,
-                    qtd: 1
+                    qtd: 1,
+                    modo: ''
                 }
             },
             saleStoreOrUpdate: function () {
