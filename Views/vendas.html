@@ -25,15 +25,15 @@
                         <img src="../Public/assets/logo-empresa.png" alt="" width="100%">
 
                         <a class="nav-group-item" href="index.html">
-                            <span class="icon icon-home"></span>
+                            <span class="icon icon-user"></span>
                             Clientes
                         </a>
                         <a class="nav-group-item" href="produtos.html">
-                            <span class="icon icon-folder"></span>
+                            <span class="icon icon-bag"></span>
                             Produtos
                         </a>
                         <a class="nav-group-item active" href="vendas.html">
-                            <span class="icon icon-download"></span>
+                            <span class="icon icon-basket"></span>
                             Vendas
                         </a>
                     </nav>
@@ -94,10 +94,15 @@
                 <div class="form-group">
                     <input type="text" class="form-control" v-model="sale.qtd" placeholder="Quantidade">
                 </div>
-                <div class="form-grupo">
-                    <option value="{{Vendas.modo}}"></option>
-                    <input typed="text" placeholder="Modo de pagamento" v-model="sale.modo"> 
+                <div class="form-group">
+                    <select v-model="sale.modo" class="form-control">
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Credito">Crédito</option>
+                        <option value="Debito">Débito</option>
+                    </select>
                 </div>
+
                 <button class="btn btn-positive" @click="saleStoreOrUpdate" type="button">Salvar</button>
                 <button type="button" class="btn btn-negative" @click="openModal=false">Fechar</button>
             </form>

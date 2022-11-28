@@ -21,7 +21,7 @@ let read = require('read-file-utf8')
                 produto: '',
                 preco: 0,
                 qtd: 1,
-                modo: 'Credito'
+                modo: ''
             }
         },
         ready: function () {
