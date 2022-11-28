@@ -15,12 +15,14 @@
 <body>
     <div class="window">
         <header class="toolbar toolbar-header">
-            <h1 class="title">Loja XYZ</h1>
+            <h1 class="title">Meirelles Tecnologia</h1>
         </header>
         <div class="window-content">
             <div class="pane-group">
                 <div class="pane-sm sidebar">
                     <nav class="nav-group">
+                        <img src="../Public/assets/logo-empresa.png" alt="" width="100%">
+
                         <a class="nav-group-item" href="index.html">
                             <span class="icon icon-home"></span>
                             Clientes
@@ -51,7 +53,7 @@
                         <tbody>
                             <tr v-for="produto in produtos">
                                 <td>{{produto.nome}}</td>
-                                <td>{{produto.preco}}</td>
+                                <td>R$ {{produto.preco}}</td>
                                 <td>{{produto.qtd}}</td>
                                 <td type="button" class="btn btn-dark" @click="editProduct(produto)">Editar</td>
                             </tr>
