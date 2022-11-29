@@ -12,7 +12,6 @@ let read = require('read-file-utf8')
     db.save()
 
     let oldQtdSold = 1
-    let oldQtdAval = 1
 
     new Vue({
         el: 'body',
@@ -41,8 +40,9 @@ let read = require('read-file-utf8')
                 this.mode = 'edicao'
                 this.openModal = true
                 this.sale = sale
+                oldQtdAval = 
+
                 oldQtdSold = this.sale.qtd
-                oldQtdAval = produtos.find({ nome: this.sale.produto })[0].qtd // Guarda a anterior para tirar a diferença
             },
             createSale: function () {
                 this.mode = 'cadastro'
@@ -54,27 +54,21 @@ let read = require('read-file-utf8')
                     qtd: 1,
                     modo: ''
                 }
-                oldQtdSold = this.sale.qtd
-                oldQtdAval = produtos.find({ nome: this.sale.produto })[0].qtd // Guarda a anterior para tirar a diferença
             },
             saleStoreOrUpdate: function () {
 
                 if (typeof this.sale.$loki != 'undefined') {
 
-                    // Achar uma forma de verificar a edição do produto, diminuindo ou abaixando a quantidade disponível de acordo com o que é inserido na edição da venda
+                    if(this.sale.qtd != oldQtdSold){  // Se foi alterado
 
-                    /*
-                    let difQtdAval = produtos.find({ nome: this.sale.produto })[0].qtd - oldQtdAval
+                        let difQtdSold = this.sale.qtd - oldQtdSold
 
-                    let difQtdSold = this.sale.qtd - oldQtdSold
-
-                    if (produtos.find({ nome: this.sale.produto })[0].qtd > produtos.find({ nome: this.sale.produto })[0].qtd + difQtdAval){
-                        Number(produtos.find({ nome: this.sale.produto })[0].qtd -= oldQtdSold)
-
-                    } else{
-                        Number(produtos.find({ nome: this.sale.produto })[0].qtd += difQtdSold)
+                        if( (produtos.find({ nome: this.sale.produto })[0].qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd){
+                            produtos.find({ nome: this.sale.produto })[0].qtd -= difQtdSold
+                        } else{
+                            produtos.find({ nome: this.sale.produto })[0].qtd += difQtdSold
+                        }
                     }
-                    */
 
                     vendas.update(this.sale)
                     this.openModal = false
