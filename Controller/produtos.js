@@ -2,11 +2,13 @@ let read = require('read-file-utf8')
 let loki = require('lokijs')  // Mesmo que "import"  
 let db = new loki('Views/db.json')
 let data = read(__dirname + '/db.json')
+
 db.loadJSON(data)
 window.Vue = require('vue')
 // let produtos = db.addCollection('produtos')
 
 let produtos = db.getCollection('produtos')
+
 db.save()
 new Vue({
     el: 'body',
