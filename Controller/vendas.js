@@ -62,13 +62,14 @@ let read = require('read-file-utf8')
                     if(this.sale.qtd != oldQtdSold){  // Se foi alterado
                         let difQtdSold = this.sale.qtd - oldQtdSold  // Tira a diferança entre a atual quantidade vendida e a anterior
                         let produtoSold = produtos.find({ nome: this.sale.produto })[0]
+                        let produtoQtdSold = produtos.find({ nome: this.sale.produto })[0].qtd
 
                         if (this.sale.qtd >= oldQtdSold){ // (produtoSold.qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd
-                            produtos.find({ nome: this.sale.produto })[0].qtd -= difQtdSold
+                            produtoSold.qtd = parseInt(produtoQtdSold - difQtdSold)
                         } else if ( (0 < this.sale.qtd < oldQtdSold) ){
-                            produtos.find({ nome: this.sale.produto })[0].qtd += difQtdSold
+                            produtoSold.qtd = parseInt(produtoQtdSold + (difQtdSold * -1))
                         } else if((produtoSold.qtd + difQtdSold) < 0){
-                            alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${produtos.find({ nome: this.sale.produto })[0].nome}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!`)
+                            alert(`Há somente ${produtoSold.qtd} do produto "${produtoSold.nome}" ${produtoSold.name == 1 ? 'disponível' : 'disponíveis'}!`)
                         }
                     }
                     vendas.update(this.sale)
