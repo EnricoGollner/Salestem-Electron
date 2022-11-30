@@ -2,12 +2,11 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
-
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1050,
-    height: 650,
+    width: 1110,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,

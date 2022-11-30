@@ -86,7 +86,6 @@ class Clientes {
         return oResult
     }  
 
-
     /**
      * @private
      * @param {*} sNome 
