@@ -15,7 +15,7 @@ if (fileExists(__dirname + '/db.json')) {
 window.Vue = require('vue')
 
 // Validador
-function validadorCpf(cpf){
+function validadorCpf(strCPF){
     var Soma;
     var Resto;
     Soma = 0;
