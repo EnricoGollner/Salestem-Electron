@@ -75,17 +75,17 @@ let read = require('read-file-utf8')
                     // console.log(produtos.find({nome: this.sale.produto})[0].preco)  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
                     this.sale.preco = produtos.find({ nome: this.sale.produto })[0].preco  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
 
-                    if (produtos.find({ nome: this.sale.produto })[0].qtd > 0){
+                    if (this.sale.qtd > produtos.find({ nome: this.sale.produto })[0].qtd){
+
+                       alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${produtos.find({ nome: this.sale.produto })[0].nome}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!`)
+
+                    } else if (produtos.find({ nome: this.sale.produto })[0].qtd > 0){
                        produtos.find({ nome: this.sale.produto })[0].qtd -= this.sale.qtd
                        vendas.insert(this.sale)
                        this.openModal = false
-                    } else if(produtos.find({ nome: this.sale.produto })[0].qtd == 0){
-                        alert(`O produto ${this.sale.produto} se encontra fora de estoque!`)
-                    }else if(produtos.find({ nome: this.sale.produto })[0].qtd < 0){
-                        alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${this.sale.produto}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!\nTentou inserir: ${this.sale.qtd}`)
+                   }else{
+                        alert("Este produto se encontra fora de estoque!")
                     }
-
-                    
                 }
                 db.save()
             },
