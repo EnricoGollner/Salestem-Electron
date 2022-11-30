@@ -12,7 +12,7 @@ let nOldQtdSold = 1
 
 db.save() // Salva o arquivo JSON
 
-class ControllerVendas {
+class Vendas {
     constructor(model) {
         this.model = model;
         this.sale = this.sale;
@@ -20,7 +20,7 @@ class ControllerVendas {
     }
 
     /**
-     * 
+     * @private
      * @param {*} oSale 
      * @param {*} oProdutoSold 
      * @returns 
@@ -122,7 +122,7 @@ new Vue({
         saleStoreOrUpdate: function () {
             let sale = this.sale
             let produtoSold = produtos.find({ nome: this.sale.produto })[0]
-            let controllerClass = new ControllerVendas(this)
+            let controllerClass = new Vendas(this)
 
             if (typeof this.sale.$loki != 'undefined') {
                 let rSale = controllerClass._updateSale(sale, nOldQtdSold)
