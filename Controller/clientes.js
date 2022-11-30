@@ -17,33 +17,40 @@ window.Vue = require('vue')
 // Definindo o banco de dados de Clientes
 let clientes = db.getCollection('Clientes')
 
-/**
- * Valida CPF
- * @param {*} strCPF 
- * @returns 
- */
-function validadorCpf(strCPF){
-    var Soma;
-    var Resto;
-    Soma = 0;
-    
-    if (strCPF == "00000000000") return false;
+class Clientes {
+    constructor(model) {
+        this.model = model;
+        this.clientes = this.clientes;
+    }
 
-    for (i = 1; i <= 9; i++)
-        Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
-    Resto = (Soma * 10) % 11;
+    /**
+     * @private
+     * @param {*} sCpf 
+     * @returns 
+     */
+    _validarCpf(sCpf) {
+        var Soma;
+        var Resto;
+        Soma = 0;
+        
+        if (sCpf == "00000000000") return false;
 
-    if (Resto == 10 || Resto == 11) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10))) return false;
+        for (var i = 1; i <= 9; i++)
+            Soma = Soma + parseInt(sCpf.substring(i - 1, i)) * (11 - i);
+        Resto = (Soma * 10) % 11;
 
-    Soma = 0;
-    for (i = 1; i <= 10; i++)
-        Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
-    Resto = (Soma * 10) % 11;
+        if (Resto == 10 || Resto == 11) Resto = 0;
+        if (Resto != parseInt(sCpf.substring(9, 10))) return false;
 
-    if (Resto == 10 || Resto == 11) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11))) return false;
-    return true;
+        Soma = 0;
+        for (i = 1; i <= 10; i++)
+            Soma = Soma + parseInt(sCpf.substring(i - 1, i)) * (12 - i);
+        Resto = (Soma * 10) % 11;
+
+        if (Resto == 10 || Resto == 11) Resto = 0;
+        if (Resto != parseInt(sCpf.substring(10, 11))) return false;
+        return true;
+    }
 }
 
 new Vue({
@@ -78,13 +85,22 @@ new Vue({
             }
         },
         clientStoreOrUpdate: function () {
-            if (typeof this.client.$loki != 'undefined') {
-                clientes.update(this.client)
+            let clienteClass = new Clientes(this)
+
+            if (clienteClass._validarCpf(this.client.cpf)) {
+
+                if (this.mode == 'cadastro') {
+                    clientes.insert(this.client)
+                } else {
+                    clientes.update(this.client)
+                }
+
+                this.openModal = false
+                db.save()
+
             } else {
-                clientes.insert(this.client)
+                alert('Por favor digite um CPF válido.')
             }
-            db.save()
-            this.openModal = false
         }
     }
 })
