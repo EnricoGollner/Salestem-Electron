@@ -8,49 +8,73 @@ window.Vue = require('vue')
 let vendas = db.getCollection('vendas')
 let clientes = db.getCollection('Clientes')
 let produtos = db.getCollection('produtos')
-let oldQtdSold = 1
+let nOldQtdSold = 1
 
 db.save() // Salva o arquivo JSON
 
-class ControllerClass {
-    constructor(model, sale, produtos) {
-      this.model = model;
-      this.sale  = sale;
-      this.produtos = produtos;
+class ControllerVendas {
+    constructor(model) {
+        this.model = model;
+        this.sale = this.sale;
+        this.produtos = this.produtos;
+    }
+
+    /**
+     * 
+     * @param {*} oSale 
+     * @param {*} oProdutoSold 
+     * @returns 
+     */
+    _createSale(oSale, oProdutoSold) {
+        oSale.preco = oProdutoSold.preco  // Atualiza o preço do produto
+
+        // Se a quantidade de produtos disponíveis for maior que a quantidade de produtos vendidos
+        if ((oProdutoSold.qtd - oSale.qtd) > -1){
+            oProdutoSold.qtd -= oSale.qtd
+            
+            return true
+        } else if (oProdutoSold.qtd < 0){ 
+            alert("Este produto se encontra fora de estoque!")
+            return false
+        } else{
+            alert(`Há somente ${oProdutoSold.qtd} do produto "${oProdutoSold.nome}"` +
+                `${oProdutoSold.name == 1 ? 'disponível' : 'disponíveis'}!`)
+            return false
+        }
     }
 
     /**
      * @private
-     * @param {*} saleAux 
-     * @param {*} oldQtdSold 
-     * @returns 
+     * @param {*} saleAux
+     * @param {*} nOldQtdSold
+     * @returns
      */
-    _updateSale(saleAux, oldQtdSold) {
-        if(saleAux.qtd != oldQtdSold){  // Se foi alterado
-            let difQtdSold = this.sale.qtd - oldQtdSold  // Tira a diferança entre a atual quantidade vendida e a anterior
-            let produtoSold = produtos.find({ nome: this.sale.produto })[0]
-            let auxProdQtdSold = produtos.find({ nome: this.sale.produto })[0].qtd
+    _updateSale(oSale, nOldQtdSold) {
+        if (oSale.qtd != nOldQtdSold) { // Se foi alterado
+            let difQtdSold = oSale.qtd - nOldQtdSold; // diferença entre a atual quantidade vendida e a anterior
+            let produtoTotQtd = produtos.find({ nome: oSale.produto })[0];
+            let auxProdTotQtd = produtoTotQtd.qtd;
 
-            if ( (parseInt(auxProdQtdSold - saleAux.qtd)) <= 0 ) { // Se a quantidade de produtos vendidos for maior que a quantidade de produtos disponíveis
-                alert(`Há somente ${produtoSold.qtd} do produto "${produtoSold.nome}" ${produtoSold.name == 1 ? 'disponível' : 'disponíveis'}!`)
-                saleAux.qtd = oldQtdSold
+            // Se aquantidade de produtos vendidos for maior que a quantidade de produtos disponíveis
+            if (parseInt(auxProdTotQtd - oSale.qtd) <= 0) {
+                alert(`Há somente ${produtoTotQtd.qtd} do produto "${produtoTotQtd.nome}"` + 
+                    `${produtoTotQtd.name == 1 ? "disponível" : "disponíveis"}!`);
+                oSale.qtd = nOldQtdSold;
 
-            } else if (saleAux.qtd <= 0) { // Se a quantidade de produtos vendidos for menor ou igual a 0
-                alert(`A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`)
-                saleAux.qtd = oldQtdSold
+            } else if (oSale.qtd <= 0) {// Se a quantidade de produtos vendidos for menor ou igual a 0
+                alert(`A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`);
+                oSale.qtd = nOldQtdSold;
 
-            } else if (saleAux.qtd >= oldQtdSold){ 
-                auxProdQtdSold -= difQtdSold
+            } else if (oSale.qtd >= nOldQtdSold) {
+                auxProdTotQtd -= difQtdSold;
 
-            } else if ( (0 < saleAux.qtd < oldQtdSold) ){
-                auxProdQtdSold += (difQtdSold * -1)
+            } else if (0 < oSale.qtd < nOldQtdSold) {
+                auxProdTotQtd += difQtdSold * -1;
             }
-
-            produtoSold.qtd = parseInt(auxProdQtdSold)
+            produtoTotQtd.qtd = parseInt(auxProdTotQtd); // Atualiza a quantidade de produtos disponíveis
         }
-        return saleAux
+        return oSale;
     }
-  
 }
 
 new Vue({
@@ -82,7 +106,7 @@ new Vue({
             this.sale = sale
             oldQtdAval = 
 
-            oldQtdSold = this.sale.qtd
+            nOldQtdSold = this.sale.qtd
         },
         createSale: function () {
             this.mode = 'cadastro'
@@ -96,35 +120,28 @@ new Vue({
             }
         },
         saleStoreOrUpdate: function () {
-            if (typeof this.sale.$loki != 'undefined') {
-                let sale = this.sale
-                let produtoSold = produtos.find({ nome: this.sale.produto })[0]
+            let sale = this.sale
+            let produtoSold = produtos.find({ nome: this.sale.produto })[0]
+            let controllerClass = new ControllerVendas(this)
 
-                // Chamando o método responsável por atualizar a quantidade de produtos vendidos
-                let controllerClass = new ControllerClass(this, this.sale, produtoSold);
-                let rSale = controllerClass._updateSale(sale, oldQtdSold)
+            if (typeof this.sale.$loki != 'undefined') {
+                let rSale = controllerClass._updateSale(sale, nOldQtdSold)
 
                 vendas.update(rSale)
                 this.openModal = false
 
             } else {
-                this.sale.preco = produtos.find({ nome: this.sale.produto })[0].preco  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
+                let rSale = controllerClass._createSale(sale, produtoSold)
 
-                if ((produtos.find({ nome: this.sale.produto })[0].qtd - this.sale.qtd) > -1){
-                    produtos.find({ nome: this.sale.produto })[0].qtd -= this.sale.qtd
-                    vendas.insert(this.sale)
-                    this.openModal = false
-
-                } else if (produtos.find({ nome: this.sale.produto })[0].qtd < 0){
-                    alert("Este produto se encontra fora de estoque!")
-                } else{
-                    alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${produtos.find({ nome: this.sale.produto })[0].nome}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!`)
+                if (rSale) { 
+                    vendas.insert(sale)
+                    this.openModal = false 
                 }
             }
             db.save()
         },
         closeNotSaving(sale){
-            this.sale.qtd = oldQtdSold 
+            this.sale.qtd = nOldQtdSold 
             this.openModal = false
         }
     }
