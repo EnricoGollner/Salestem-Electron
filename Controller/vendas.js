@@ -60,11 +60,9 @@ let read = require('read-file-utf8')
                 if (typeof this.sale.$loki != 'undefined') {
 
                     if(this.sale.qtd != oldQtdSold){  // Se foi alterado
-                        let difQtdSold = this.sale.qtd - oldQtdSold  // Tira a diferança entre a atual quantidade vendida e a anterior
+                        let difQtdSold = this.sale.qtd - oldQtdSold  // Tira a diferança entre a atual quantidade atual e a anterior
 
-                        if((produtos.find({ nome: this.sale.produto })[0].qtd + difQtdSold) < 0){
-                            alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${produtos.find({ nome: this.sale.produto })[0].nome}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!`)
-                        } else if((produtos.find({ nome: this.sale.produto })[0].qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd){
+                        if( (produtos.find({ nome: this.sale.produto })[0].qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd){
                             produtos.find({ nome: this.sale.produto })[0].qtd -= difQtdSold
                         } else{
                             produtos.find({ nome: this.sale.produto })[0].qtd += difQtdSold
@@ -74,22 +72,26 @@ let read = require('read-file-utf8')
                     vendas.update(this.sale)
                     this.openModal = false
                 } else {
-                     // console.log(produtos.find({nome: this.sale.produto})[0].preco)  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
-                     this.sale.preco = produtos.find({ nome: this.sale.produto })[0].preco  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
+                    // console.log(produtos.find({nome: this.sale.produto})[0].preco)  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
+                    this.sale.preco = produtos.find({ nome: this.sale.produto })[0].preco  // Procuramos nos produtos o produto com o nome selecionado na parte da venda
 
-                     if (this.sale.qtd > produtos.find({ nome: this.sale.produto })[0].qtd){
+                    if (this.sale.qtd > produtos.find({ nome: this.sale.produto })[0].qtd){
 
-                        alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${produtos.find({ nome: this.sale.produto })[0].nome}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!`)
+                       alert(`Há somente ${produtos.find({ nome: this.sale.produto })[0].qtd} do produto "${this.sale.produto}" ${produtos.find({ nome: this.sale.produto })[0].name == 1 ? 'disponível' : 'disponíveis'}!\nTentou inserir: ${this.sale.qtd}`)
 
-                     } else if (produtos.find({ nome: this.sale.produto })[0].qtd > 0){
-                        produtos.find({ nome: this.sale.produto })[0].qtd -= this.sale.qtd
-                        vendas.insert(this.sale)
-                        this.openModal = false
-                    }else{
-                         alert("Este produto se encontra fora de estoque!")
-                     }
-                 }
-                 db.save()
-             }
-         }
+                    } else if (produtos.find({ nome: this.sale.produto })[0].qtd > 0){
+                       produtos.find({ nome: this.sale.produto })[0].qtd -= this.sale.qtd
+                       vendas.insert(this.sale)
+                       this.openModal = false
+                    } else{
+                        alert(`O produto ${this.sale.produto} se encontra fora de estoque!`)
+                    }
+                }
+                db.save()
+            },
+            closeNotSaving(sale){
+                this.sale.qtd = oldQtdSold
+                this.openModal = false
+            }
+        }
      })
