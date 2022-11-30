@@ -1,3 +1,4 @@
+// Definições - Loki
 let read = require('read-file-utf8')
 let loki = require('lokijs')  // Mesmo que "import"  
 let db = new loki('Views/db.json')
@@ -13,31 +14,38 @@ if (fileExists(__dirname + '/db.json')) {
     db.save()
 }
 window.Vue = require('vue')
+// Definindo o banco de dados de Clientes
+let clientes = db.getCollection('Clientes')
 
-// Validador
+/**
+ * Valida CPF
+ * @param {*} strCPF 
+ * @returns 
+ */
 function validadorCpf(strCPF){
     var Soma;
     var Resto;
     Soma = 0;
-  if (strCPF == "00000000000") return false;
+    
+    if (strCPF == "00000000000") return false;
 
-  for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
-  Resto = (Soma * 10) % 11;
-
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10)) ) return false;
-
-  Soma = 0;
-    for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+    for (i = 1; i <= 9; i++)
+        Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
     Resto = (Soma * 10) % 11;
 
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11) ) ) return false;
+    if (Resto == 10 || Resto == 11) Resto = 0;
+    if (Resto != parseInt(strCPF.substring(9, 10))) return false;
+
+    Soma = 0;
+    for (i = 1; i <= 10; i++)
+        Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+    Resto = (Soma * 10) % 11;
+
+    if (Resto == 10 || Resto == 11) Resto = 0;
+    if (Resto != parseInt(strCPF.substring(10, 11))) return false;
     return true;
 }
 
-
-let clientes = db.getCollection('Clientes')
 new Vue({
     el: 'body',
     data: {
