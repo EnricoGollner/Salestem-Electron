@@ -64,12 +64,15 @@ let read = require('read-file-utf8')
                         let produtoSold = produtos.find({ nome: this.sale.produto })[0]
                         let produtoQtdSold = produtos.find({ nome: this.sale.produto })[0].qtd
 
-                        if (this.sale.qtd >= oldQtdSold){ // (produtoSold.qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd
+
+                        if (this.sale.qtd === produtoQtdSold) {
+                            alert(`Há somente ${produtoSold.qtd} do produto "${produtoSold.nome}" ${produtoSold.name == 1 ? 'disponível' : 'disponíveis'}!`)
+                        } else if (this.sale.qtd <= 0) {
+                            alert(`A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`)
+                        } else if (this.sale.qtd >= oldQtdSold){ // (produtoSold.qtd + difQtdSold) > produtos.find({ nome: this.sale.produto })[0].qtd
                             produtoSold.qtd = parseInt(produtoQtdSold - difQtdSold)
                         } else if ( (0 < this.sale.qtd < oldQtdSold) ){
                             produtoSold.qtd = parseInt(produtoQtdSold + (difQtdSold * -1))
-                        } else if((produtoSold.qtd + difQtdSold) < 0){
-                            alert(`Há somente ${produtoSold.qtd} do produto "${produtoSold.nome}" ${produtoSold.name == 1 ? 'disponível' : 'disponíveis'}!`)
                         }
                     }
                     vendas.update(this.sale)
