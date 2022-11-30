@@ -68,7 +68,6 @@ let read = require('read-file-utf8')
                             produtos.find({ nome: this.sale.produto })[0].qtd -= difQtdSold
                         } else{
                             produtos.find({ nome: this.sale.produto })[0].qtd += difQtdSold
-
                         }
                     }
 
