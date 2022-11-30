@@ -45,10 +45,7 @@ class Clientes {
         }
 
         if ((sCliente == '' || sCliente == null ) || (nClienteTel == '' || nClienteTel == null) ||
-            (oCliente.cpf == '' || oCliente.cpf == null)) {
-
-            this.model.openModal = false    
-
+            (oCliente.cpf == '' || oCliente.cpf == null)) { 
             oResult.title = 'Erro ao cadastrar'
             oResult.text = 'Todos os campos devem estar preenchidos'
             oResult.icon = 'error'
@@ -69,6 +66,13 @@ class Clientes {
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
 
+        } else if (this._validarCpfDuplicado(oCliente.cpf) == false) {
+            oResult.title = 'Erro ao cadastrar'
+            oResult.text = 'CPF já cadastrado'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+            
         } else if (this._validarTelefone(oCliente.telefone) == false) {
             oResult.title = 'Erro ao cadastrar'
             oResult.text = 'Telefone inválido'
@@ -83,6 +87,7 @@ class Clientes {
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
         }
+
         return oResult
     }  
 
@@ -92,12 +97,16 @@ class Clientes {
      * @returns 
      */
     _validaNome(sNome) {
-        let sNomeValido = sNome.replace(/[^a-zA-Z ]/g, "")
-        if (sNomeValido == sNome) {
-            return true
-        } else {
-            return false
-        }
+        return sNome.replace(/[^a-zA-ZÀ-ú ]/g, "") == sNome ? true : false;
+    }
+
+    /**
+     * @private
+     * @param {*} sTelefone 
+     * @returns 
+    */
+    _validarTelefone(sTelefone) {
+        return sTelefone.replace(/[^0-9]/g, "") == sTelefone ? true : false;
     }
 
     /**
@@ -106,9 +115,8 @@ class Clientes {
      * @returns 
      */
     _validarCpf(sCpf) {
-        var soma;
-        var resto;
-        soma = 0;
+        let soma = 0;
+        let resto;
         
         if (sCpf == "00000000000") return false;
 
@@ -131,16 +139,18 @@ class Clientes {
 
     /**
      * @private
-     * @param {*} sTelefone 
+     * @param {*} sCpf 
      * @returns 
      */
-    _validarTelefone(sTelefone) {
-        let sTelefoneValido = sTelefone.replace(/[^0-9]/g, "")
-        if (sTelefoneValido == sTelefone) {
+    _validarCpfDuplicado(sCpf) {
+        let sClienteCpf = clientes.find({ cpf: sCpf })
+
+        if (sClienteCpf.length <= 0) {
             return true
-        } else {
+        } else if (sClienteCpf[0].cpf === sCpf){
             return false
         }
+        
     }
 }
 
@@ -188,28 +198,13 @@ new Vue({
                 confirmButtonText: oResult.confirmButtonText
             })
 
-         /*    if (clienteClass._validarCpf(this.client.cpf)) {
-
+            if (oResult.result) {
                 if (this.mode == 'cadastro') {
                     clientes.insert(this.client)
                 } else {
                     clientes.update(this.client)
                 }
-
-                this.openModal = false
-                db.save()
-            } else {
-                this.openModal = false
-                
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'CPF inválido!',
-                    icon: 'error',
-                    confirmButtonText: 'Ok'
-                })
-
-                db.save()
-            } */
+            }
         }
     }
 })
