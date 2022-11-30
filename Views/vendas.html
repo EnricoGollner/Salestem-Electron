@@ -76,35 +76,41 @@
     <div id="modal" v-if="openModal">
         <div class="wrap">
             <form id="cadastro-cliente" action="" class="pane-body">
-                <h3 v-if="mode == 'cadastro'">Cadastro de Venda</h3>
-                <h3 v-if="mode == 'edicao'">Editar Venda</h3>
+                <h3 v-if="mode == 'cadastro'">
+                    <Center> Cadastro de Venda</Center>
+                </h3>
+                <h3 v-if="mode == 'edicao'">
+                    <Center> Edição de Venda</Center>
+                </h3>
                 <div class="form-group">
+                    <label >Selecione o Cliente: </label>
                     <select v-model="sale.cliente" class="form-control">
-                        <option value="{{c.nome}}" v-for="c in clientes">{{c.nome}}</option>
+                        <option value="{{c.nome}}" selected v-for="c in clientes">{{c.nome}}</option>
                     </select>
                 </div>
                 <div class="form-group">
+                    <label >Selecione o Produto: </label>
                     <select v-model="sale.produto" class="form-control">
-                        <option value="{{p.nome}}" v-for="p in produtos">{{p.nome}}</option>
+                        <option value="{{p.nome}}" selected v-for="p in produtos">{{p.nome}}</option>
                     </select>
                 </div>
-                <div class="form-group" v-if="mode == 'edicao'">
-                    <input type="text" class="form-control" v-model="sale.preco" placeholder="Preço">
-                </div>
                 <div class="form-group">
+                    <label >Informe a Quantidade: </label>
                     <input type="text" class="form-control" v-model="sale.qtd" placeholder="Quantidade">
                 </div>
                 <div class="form-group">
+                    <label >Informe o Modo de Pagamento: </label>
                     <select v-model="sale.modo" class="form-control">
-                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Dinheiro" selected>Dinheiro</option>
                         <option value="Pix">Pix</option>
                         <option value="Credito">Crédito</option>
                         <option value="Debito">Débito</option>
                     </select>
                 </div>
-
-                <button class="btn btn-positive" @click="saleStoreOrUpdate" type="button">Salvar</button>
-                <button type="button" class="btn btn-negative" @click="closeNotSaving(vendas)">Fechar</button>
+                <Center>
+                    <button class="btn btn-positive icon icon-check" @click="saleStoreOrUpdate" type="button"> Salvar</button>
+                    <button class="btn btn-negative icon icon-cancel" @click="closeNotSaving(vendas)" type="button" > Fechar</button>
+                </Center>
             </form>
         </div>
     </div>

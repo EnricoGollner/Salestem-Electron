@@ -29,13 +29,13 @@ class Clientes {
     }
 
     /**
-     * @private
      * @param {*} oCliente 
      * @returns
      */
-    _validarCadastro(oCliente) {        
-        let sCliente = oCliente.nome
+    _validarCadastro(oCliente, sModo) {
+        let sClienteNome = oCliente.nome
         let nClienteTel = oCliente.telefone
+        let sMode = sModo === "cadastro" ? 'cadastrar' : 'editar'
         let oResult = {
             title: '',
             text: '',
@@ -44,37 +44,37 @@ class Clientes {
             result: false
         }
 
-        if ((sCliente == '' || sCliente == null ) || (nClienteTel == '' || nClienteTel == null) ||
+        if ((sClienteNome == '' || sClienteNome == null ) || (nClienteTel == '' || nClienteTel == null) ||
             (oCliente.cpf == '' || oCliente.cpf == null)) { 
-            oResult.title = 'Erro ao cadastrar'
+            oResult.title = `Erro ao ${sMode} o cliente`
             oResult.text = 'Todos os campos devem estar preenchidos'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
 
         } else if (this._validaNome(oCliente.nome) == false) {
-            oResult.title = 'Erro ao cadastrar'
+            oResult.title = `Erro ao ${sMode} o cliente`
             oResult.text = 'Nome inválido'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
 
         } else if (this._validarCpf(oCliente.cpf) == false) {
-            oResult.title = 'Erro ao cadastrar'
+            oResult.title = `Erro ao ${sMode} o cliente`
             oResult.text = 'CPF inválido'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
 
-        } else if (this._validarCpfDuplicado(oCliente.cpf) == false) {
-            oResult.title = 'Erro ao cadastrar'
+        } else if (this._validarCpfDuplicado(oCliente.cpf, sMode) == false) {
+            oResult.title = `Erro ao ${sMode} o cliente`
             oResult.text = 'CPF já cadastrado'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
             
         } else if (this._validarTelefone(oCliente.telefone) == false) {
-            oResult.title = 'Erro ao cadastrar'
+            oResult.title = `Erro ao ${sMode} o cliente`
             oResult.text = 'Telefone inválido'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
@@ -82,17 +82,15 @@ class Clientes {
 
         } else {
             oResult.title = 'Sucesso'
-            oResult.text = 'Cliente cadastrado com sucesso'
+            oResult.text = `Cliente ${sClienteNome} ${sMode === 'cadastrar' ? 'cadastrado' : 'editado'} com sucesso`
             oResult.icon = 'success'
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
         }
-
         return oResult
     }  
 
     /**
-     * @private
      * @param {*} sNome 
      * @returns 
      */
@@ -101,7 +99,6 @@ class Clientes {
     }
 
     /**
-     * @private
      * @param {*} sTelefone 
      * @returns 
     */
@@ -110,45 +107,54 @@ class Clientes {
     }
 
     /**
-     * @private
      * @param {*} sCpf 
      * @returns 
      */
     _validarCpf(sCpf) {
         let soma = 0;
         let resto;
-        
-        if (sCpf == "00000000000") return false;
 
-        for (var i = 1; i <= 9; i++)
-            soma = soma + parseInt(sCpf.substring(i - 1, i)) * (11 - i);
-        resto = (soma * 10) % 11;
+        if (sCpf.replace(/[^0-9]/g, "").length != 11) {
+            return false;
 
-        if (resto == 10 || resto == 11) resto = 0;
-        if (resto != parseInt(sCpf.substring(9, 10))) return false;
+        } else {
+            if (sCpf == "00000000000") return false;
 
-        soma = 0;
-        for (i = 1; i <= 10; i++)
-            soma = soma + parseInt(sCpf.substring(i - 1, i)) * (12 - i);
-        resto = (soma * 10) % 11;
+            for (var i = 1; i <= 9; i++)
+                soma = soma + parseInt(sCpf.substring(i - 1, i)) * (11 - i);
+            resto = (soma * 10) % 11;
 
-        if (resto == 10 || resto == 11) resto = 0;
-        if (resto != parseInt(sCpf.substring(10, 11))) return false;
-        return true;
+            if (resto == 10 || resto == 11) resto = 0;
+            if (resto != parseInt(sCpf.substring(9, 10))) return false;
+
+            soma = 0;
+            for (i = 1; i <= 10; i++)
+                soma = soma + parseInt(sCpf.substring(i - 1, i)) * (12 - i);
+            resto = (soma * 10) % 11;
+
+            if (resto == 10 || resto == 11) resto = 0;
+            if (resto != parseInt(sCpf.substring(10, 11))) return false;
+            return true;
+        }
     }
 
     /**
-     * @private
      * @param {*} sCpf 
      * @returns 
      */
-    _validarCpfDuplicado(sCpf) {
+    _validarCpfDuplicado(sCpf, sMode) {
         let sClienteCpf = clientes.find({ cpf: sCpf })
 
         if (sClienteCpf.length <= 0) {
             return true
+
         } else if (sClienteCpf[0].cpf === sCpf){
-            return false
+
+            if (sMode === 'editar') {
+                return true
+            } else {
+                return false
+            }
         }
         
     }
@@ -165,6 +171,7 @@ new Vue({
             telefone: ''
         },
         openModal: false  // Começa fechado
+
     },
     ready: function () {
         this.clientes = clientes.data;
@@ -175,6 +182,10 @@ new Vue({
             this.mode = 'edicao'
             this.openModal = true
             this.client = client
+
+            sClienteNomeOld = this.client.nome
+            sClienteCpfOld = this.client.cpf
+            sClienteTelOld = this.client.telefone
         },
         createClient: function () {
             this.mode = 'cadastro'
@@ -187,8 +198,8 @@ new Vue({
         },
         clientStoreOrUpdate: function () {
             let clienteClass = new Clientes(this)
-
-            let oResult = clienteClass._validarCadastro(this.client)
+            let oCliente = this.client
+            let oResult = clienteClass._validarCadastro(oCliente, this.mode)
             this.openModal = false
 
             Swal.fire({
@@ -200,10 +211,17 @@ new Vue({
 
             if (oResult.result) {
                 if (this.mode == 'cadastro') {
-                    clientes.insert(this.client)
+                    clientes.insert(oCliente)
                 } else {
-                    clientes.update(this.client)
+                    clientes.update(oCliente)
                 }
+                db.save()
+            } else {
+                oCliente.nome = sClienteNomeOld
+                oCliente.cpf = sClienteCpfOld
+                oCliente.telefone = sClienteTelOld
+                clientes.update(oCliente)
+                db.save()
             }
         }
     }
