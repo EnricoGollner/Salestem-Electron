@@ -4,6 +4,10 @@ let loki = require('lokijs')  // Mesmo que "import"
 let db = new loki('Views/db.json')
 let fileExists = require('file-exists')
 const vue = require('vue')
+
+// Alertas - Swal.js
+const Swal = require('sweetalert2')
+
 let data = {}
 if (fileExists(__dirname + '/db.json')) {
     data = read(__dirname + '/db.json')
@@ -22,6 +26,79 @@ class Clientes {
     constructor(model) {
         this.model = model;
         this.clientes = this.clientes;
+    }
+
+    /**
+     * @private
+     * @param {*} oCliente 
+     * @returns
+     */
+    _validarCadastro(oCliente) {        
+        let sCliente = oCliente.nome
+        let nClienteTel = oCliente.telefone
+        let oResult = {
+            title: '',
+            text: '',
+            icon: '',
+            confirmButtonText: '',
+            result: false
+        }
+
+        if ((sCliente == '' || sCliente == null ) || (nClienteTel == '' || nClienteTel == null) ||
+            (oCliente.cpf == '' || oCliente.cpf == null)) {
+
+            this.model.openModal = false    
+
+            oResult.title = 'Erro ao cadastrar'
+            oResult.text = 'Todos os campos devem estar preenchidos'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validaNome(oCliente.nome) == false) {
+            oResult.title = 'Erro ao cadastrar'
+            oResult.text = 'Nome inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validarCpf(oCliente.cpf) == false) {
+            oResult.title = 'Erro ao cadastrar'
+            oResult.text = 'CPF inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validarTelefone(oCliente.telefone) == false) {
+            oResult.title = 'Erro ao cadastrar'
+            oResult.text = 'Telefone inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else {
+            oResult.title = 'Sucesso'
+            oResult.text = 'Cliente cadastrado com sucesso'
+            oResult.icon = 'success'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = true
+        }
+        return oResult
+    }  
+
+
+    /**
+     * @private
+     * @param {*} sNome 
+     * @returns 
+     */
+    _validaNome(sNome) {
+        let sNomeValido = sNome.replace(/[^a-zA-Z ]/g, "")
+        if (sNomeValido == sNome) {
+            return true
+        } else {
+            return false
+        }
     }
 
     /**
@@ -51,6 +128,20 @@ class Clientes {
         if (resto == 10 || resto == 11) resto = 0;
         if (resto != parseInt(sCpf.substring(10, 11))) return false;
         return true;
+    }
+
+    /**
+     * @private
+     * @param {*} sTelefone 
+     * @returns 
+     */
+    _validarTelefone(sTelefone) {
+        let sTelefoneValido = sTelefone.replace(/[^0-9]/g, "")
+        if (sTelefoneValido == sTelefone) {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -88,7 +179,17 @@ new Vue({
         clientStoreOrUpdate: function () {
             let clienteClass = new Clientes(this)
 
-            if (clienteClass._validarCpf(this.client.cpf)) {
+            let oResult = clienteClass._validarCadastro(this.client)
+            this.openModal = false
+
+            Swal.fire({
+                title: oResult.title,
+                text: oResult.text,
+                icon: oResult.icon,
+                confirmButtonText: oResult.confirmButtonText
+            })
+
+         /*    if (clienteClass._validarCpf(this.client.cpf)) {
 
                 if (this.mode == 'cadastro') {
                     clientes.insert(this.client)
@@ -99,14 +200,17 @@ new Vue({
                 this.openModal = false
                 db.save()
             } else {
-                //window.alert('Por favor digite um CPF válido.')
-                // alert pop-up
+                this.openModal = false
                 
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'CPF inválido!',
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                })
 
                 db.save()
-                this.openModal = false
-                createClient()
-            }
+            } */
         }
     }
 })
