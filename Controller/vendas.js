@@ -120,21 +120,21 @@ new Vue({
             }
         },
         saleStoreOrUpdate: function () {
-            let sale = this.sale
-            let produtoSold = produtos.find({ nome: this.sale.produto })[0]
+            let oSale = this.sale
+            let oProdutoSold = produtos.find({ nome: this.sale.produto })[0]
             let controllerClass = new Vendas(this)
 
             if (typeof this.sale.$loki != 'undefined') {
-                let rSale = controllerClass._updateSale(sale, nOldQtdSold)
+                let rSale = controllerClass._updateSale(oSale, nOldQtdSold)
 
                 vendas.update(rSale)
                 this.openModal = false
 
             } else {
-                let rSale = controllerClass._createSale(sale, produtoSold)
+                let rSale = controllerClass._createSale(oSale, oProdutoSold)
 
                 if (rSale) { 
-                    vendas.insert(sale)
+                    vendas.insert(oSale)
                     this.openModal = false 
                 }
             }

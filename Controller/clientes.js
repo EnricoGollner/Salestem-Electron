@@ -3,6 +3,7 @@ let read = require('read-file-utf8')
 let loki = require('lokijs')  // Mesmo que "import"  
 let db = new loki('Views/db.json')
 let fileExists = require('file-exists')
+const vue = require('vue')
 let data = {}
 if (fileExists(__dirname + '/db.json')) {
     data = read(__dirname + '/db.json')
@@ -98,7 +99,13 @@ new Vue({
                 this.openModal = false
                 db.save()
             } else {
-                alert('Por favor digite um CPF válido.')
+                //window.alert('Por favor digite um CPF válido.')
+                // alert pop-up
+                
+
+                db.save()
+                this.openModal = false
+                createClient()
             }
         }
     }
