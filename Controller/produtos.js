@@ -9,6 +9,8 @@ window.Vue = require('vue')
 
 let produtos = db.getCollection('produtos')
 
+let oldQtdAval = 1
+
 db.save()
 new Vue({
     el: 'body',
@@ -31,6 +33,9 @@ new Vue({
             this.mode = 'edicao'
             this.openModal = true
             this.product = product
+
+
+            oldQtdAval = this.product.qtd
         },
         createProduct: function () {
             this.mode = 'cadastro'
@@ -48,6 +53,10 @@ new Vue({
                 produtos.insert(this.product)
             }
             db.save()
+            this.openModal = false
+        },
+        closeNotSaving(product){
+            this.product.qtd = oldQtdAval
             this.openModal = false
         }
     }
