@@ -49,8 +49,8 @@
                                 <th>Produto</th>
                                 <th>Preço Un.</th>
                                 <th>Qtd</th>
-                                <th>Total</th>
-                                <th>Modo</th>
+                                <th>Preço Tot.</th>
+                                <th>Forma Pag.</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -60,7 +60,7 @@
                                 <td>{{venda.produto}}</td>
                                 <td>R$ {{venda.preco}}</td>
                                 <td>{{venda.qtd}}</td>
-                                <td>{{venda.qtd * venda.preco}}</td>
+                                <td>R$ {{venda.qtd * venda.preco}}</td>
                                 <td>{{venda.modo}}</td> 
                                 <td type="button" class="btn btn-dark icon icon-pencil" @click="editSale(venda)"> Editar</td>
                             </tr>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="form-group">
                     <label >Informe a Quantidade: </label>
-                    <input type="text" class="form-control" v-model="sale.qtd" placeholder="Quantidade">
+                    <input type="number" class="form-control" v-model="sale.qtd" placeholder="Quantidade">
                 </div>
                 <div class="form-group">
                     <label >Informe o Modo de Pagamento: </label>

@@ -4,6 +4,9 @@ let loki = require('lokijs')  // Mesmo que "import"
 let db = new loki('Views/db.json')
 let fileExists = require('file-exists')
 const vue = require('vue')
+let sClienteNomeOld = ''
+let sClienteCpfOld = ''
+let sClienteTelOld = 1
 
 // Alertas - Swal.js
 const Swal = require('sweetalert2')
@@ -54,8 +57,9 @@ class Clientes {
     _validaCpf(sCpf) {
         let soma = 0;
         let resto;
+        let regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
-        if (sCpf.replace(/[^0-9]/g, "").length != 11) {
+        if (regex.test(sCpf)) {
             return false;
 
         } else {

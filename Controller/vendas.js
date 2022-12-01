@@ -182,7 +182,7 @@ class Vendas {
 
             } else if (oSale.qtd <= 0) {// Se a quantidade de produtos vendidos for menor ou igual a 0
                 oResult.title = 'Erro ao editar a venda'
-                oResult.text = `A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`
+                oResult.text = `A quantidade de produtos vendidos não pode ser menor ou iguais a zero!`
                 oResult.icon = 'error'
                 oResult.confirmButtonText = 'Ok'
                 oResult.result = false
@@ -265,7 +265,7 @@ new Vue({
                     vendasClass.validaUpdateSale(oSale, oProdutoSold, nOldQtdSold)
                 }
             } else {
-                sweetAlert(oResult)
+                vendasClass.sweetAlert(oResult)
             }
             db.save()
         },
