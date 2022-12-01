@@ -104,6 +104,19 @@ class Clientes {
 
     /**
      * @public
+     * @param {Object} oResult 
+    */
+    sweetAlert(oResult){
+        Swal.fire({
+            title: oResult.title,
+            text: oResult.text,
+            icon: oResult.icon,
+            confirmButtonText: oResult.confirmButtonText
+        })
+    }
+
+    /**
+     * @public
      * @param {Object} oCliente 
      * @returns
     */
@@ -208,12 +221,7 @@ new Vue({
             let oResult = clienteClass.validaCadastro(oCliente, this.mode)
             this.openModal = false
 
-            Swal.fire({
-                title: oResult.title,
-                text: oResult.text,
-                icon: oResult.icon,
-                confirmButtonText: oResult.confirmButtonText
-            })
+            clienteClass.sweetAlert(oResult)
 
             if (oResult.result) {
                 if (this.mode == 'cadastro') {

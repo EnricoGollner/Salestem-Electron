@@ -48,6 +48,19 @@ class Produtos {
     _validaQtdProd(nProdutoQtd) {
         return nProdutoQtd.replace(/[^0-9]/g, "") == nProdutoQtd ? true : false;
     }
+
+    /**
+     * @public
+     * @param {Object} oResult 
+     */
+    sweetAlert(oResult){
+        Swal.fire({
+            title: oResult.title,
+            text: oResult.text,
+            icon: oResult.icon,
+            confirmButtonText: oResult.confirmButtonText
+        })
+    }
     
     /**
      * @public
@@ -146,17 +159,12 @@ new Vue({
             }
         },
         productStoreOrUpdate: function () {
-            let Produto = new Produtos(this)
+            let produtoClass = new Produtos(this)
             let oProduto = this.product
-            let oResult = Produto.validaCadastroProduto(oProduto, this.mode)
+            let oResult = produtoClass.validaCadastroProduto(oProduto, this.mode)
 
             this.openModal = false
-            Swal.fire({
-                title: oResult.title,
-                text: oResult.text,
-                icon: oResult.icon,
-                confirmButtonText: oResult.confirmButtonText
-            })
+            produtoClass.sweetAlert(oResult)
 
             if (oResult.result == true) {
                 if (this.mode == 'cadastro') {
