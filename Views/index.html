@@ -42,7 +42,7 @@
                 </div>
                 <div class="pane">
                     <div class="cadastro">
-                        <button type="button" @click="createClient()" class="btn btn-dark">Cadastro de Cliente</button>
+                        <button type="button" @click="createClient()" class="btn btn-dark icon icon-plus"> Cadastrar Cliente</button>
                     </div>
                     <table class="table table-striped">
                         <thead>
@@ -58,7 +58,7 @@
                                 <td>{{cliente.nome}}</td>
                                 <td>{{cliente.cpf}}</td>
                                 <td>{{cliente.telefone}}</td>
-                                <td type="button" class="btn btn-dark" @click="editClient(cliente)">Editar</td>
+                                <td type="button" class="btn btn-dark icon icon-pencil" @click="editClient(cliente)"> Editar</td>
                             </tr>
                         </tbody>
                     </table>

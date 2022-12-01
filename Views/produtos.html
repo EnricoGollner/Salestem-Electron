@@ -39,7 +39,7 @@
                 </div>
                 <div class="pane">
                     <div class="cadastro">
-                        <button type="button" @click="createProduct()" class="btn btn-dark">Cadastro de Produto</button>
+                        <button type="button" @click="createProduct()" class="btn btn-dark icon icon-plus"> Cadastrar Produto</button>
                     </div>
                     <table class="table table-striped">
                         <thead>
@@ -55,7 +55,7 @@
                                 <td>{{produto.nome}}</td>
                                 <td>R$ {{produto.preco}}</td>
                                 <td>{{produto.qtd}}</td>
-                                <td type="button" class="btn btn-dark" @click="editProduct(produto)">Editar</td>
+                                <td type="button" class="btn btn-dark icon icon-pencil" @click="editProduct(produto)"> Editar</td>
                             </tr>
                         </tbody>
                     </table>
