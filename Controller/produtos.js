@@ -5,7 +5,7 @@ let data = read(__dirname + '/db.json')
 
 db.loadJSON(data)
 window.Vue = require('vue')
-// let produtos = db.addCollection('produtos')
+
 // Alertas - Swal.js
 const Swal = require('sweetalert2')
 
@@ -19,7 +19,43 @@ class Produtos {
         this.produtos = this.produtos;
     }
 
-    _validarCadastroProduto(oProduto, modo) {
+    /**
+     * @private
+     * @param {Strings} sProdutoNome
+     * @returns 
+     */
+    _validaNomeProd(sProdutoNome) {
+        // regex to find especial characters
+        let regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+        return regex.test(sProdutoNome) != true ? true : false;
+    }
+
+    /**
+     * @private
+     * @param {Number} nProdutoPreco 
+     * @returns
+     */
+    _validaPrecoProd(nProdutoPreco) {
+        return nProdutoPreco.replace(/[^0-9.]/g, "") == nProdutoPreco ? true : false;
+    }
+
+    /**
+     * @private
+     * @param {Number} nProdutoQtd 
+     * @returns 
+     */
+    _validaQtdProd(nProdutoQtd) {
+        return nProdutoQtd.replace(/[^0-9]/g, "") == nProdutoQtd ? true : false;
+    }
+    
+    /**
+     * @public
+     * @param {Object} oProduto 
+     * @param {String} modo 
+     * @returns 
+    */
+    validaCadastroProduto(oProduto, modo) {
         let sProdutoNome = oProduto.nome
         let nProdutoPreco = oProduto.preco
         let nProdutoQtd = oProduto.qtd
@@ -70,33 +106,6 @@ class Produtos {
         }
         return oResult;
     }
-
-    /**
-     * @param {*} sProdutoNome
-     * @returns 
-     */
-    _validaNomeProd(sProdutoNome) {
-        // regex to find especial characters
-        let regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-
-        return regex.test(sProdutoNome) != true ? true : false;
-    }
-
-    /**
-     * @param {*} nProdutoPreco 
-     * @returns
-     */
-    _validaPrecoProd(nProdutoPreco) {
-        return nProdutoPreco.replace(/[^0-9.]/g, "") == nProdutoPreco ? true : false;
-    }
-
-    /**
-     * @param {*} nProdutoQtd 
-     * @returns 
-     */
-    _validaQtdProd(nProdutoQtd) {
-        return nProdutoQtd.replace(/[^0-9]/g, "") == nProdutoQtd ? true : false;
-    }
 }
 
 db.save()
@@ -139,7 +148,7 @@ new Vue({
         productStoreOrUpdate: function () {
             let Produto = new Produtos(this)
             let oProduto = this.product
-            let oResult = Produto._validarCadastroProduto(oProduto, this.mode)
+            let oResult = Produto.validaCadastroProduto(oProduto, this.mode)
 
             this.openModal = false
             Swal.fire({

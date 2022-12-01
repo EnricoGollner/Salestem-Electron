@@ -72,19 +72,24 @@
     <div id="modal" v-if="openModal">
         <div class="wrap">
             <form id="cadastro-cliente" action="" class="pane-body">
-                <h3 v-if="mode == 'cadastro'">Cadastro de Cliente</h3>
-                <h3 v-if="mode == 'edicao'">Editar Cliente</h3>
+                <h3 v-if="mode == 'cadastro'"><Center>Cadastro de Cliente</Center></h3>
+                <h3 v-if="mode == 'edicao'"><Center>Editar Cliente</Center></h3>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="nome" v-model="client.nome" placeholder="Nome">
+                    <label>Insira o Nome:</label>
+                    <input type="text" class="form-control" id="nome" v-model="client.nome" placeholder="Digite aqui o Nome">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="cpf" v-model="client.cpf" placeholder="CPF">
+                    <label>Insira o CPF:</label>
+                    <input type="text" class="form-control" id="cpf" v-model="client.cpf" placeholder="Digite aqui o CPF">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="telefone" v-model="client.telefone" placeholder="Telefone">
+                    <label>Insira o Telefone:</label>
+                    <input type="text" class="form-control" id="telefone" v-model="client.telefone" placeholder="Digite aqui o Telefone">
                 </div>
-                <button class="btn btn-positive" @click="clientStoreOrUpdate" type="button">Salvar</button>
-                <button type="button" class="btn btn-negative" @click="openModal=false">Fechar</button>
+                <Center>
+                    <button class="btn btn-positive icon icon-check" @click="clientStoreOrUpdate" type="button"> Salvar</button>
+                    <button class="btn btn-negative icon icon-cancel" @click="openModal=false" type="button" > Fechar</button>
+                </Center>
             </form>
         </div>
     </div>

@@ -69,20 +69,24 @@
     <div id="modal" v-if="openModal">
         <div class="wrap">
             <form id="cadastro-cliente" action="https://api.sheetmonkey.io/form/77pC5GLE7cuh7EY6J9pKbe" class="pane-body">
-                <h3 v-if="mode == 'cadastro'">Cadastro de Produto</h3>
-                <h3 v-if="mode == 'edicao'">Editar Produto</h3>
+                <h3 v-if="mode == 'cadastro'"><Center>Cadastro de Produto</Center></h3>
+                <h3 v-if="mode == 'edicao'"><Center>Editar Produto</Center></h3>
                 <div class="form-group">
-                    <input type="text" class="form-control" v-model="product.nome" placeholder="Nome">
+                    <label >Inisra o Nome: </label>
+                    <input type="text" class="form-control" v-model="product.nome" placeholder="Digite aqui o Nome">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" v-model="product.preco" placeholder="Preço">
+                    <label >Insira o Preço da unidade: </label>
+                    <input type="text" class="form-control" v-model="product.preco" placeholder="R$ ">
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" v-model="product.qtd"
-                        placeholder="Quantidade">
+                    <label >Insira a quantidade: </label>
+                    <input type="text" class="form-control" v-model="product.qtd" placeholder="Digite a quantidade">
                 </div>
-                <button class="btn btn-positive" @click="productStoreOrUpdate" type="button">Salvar</button>
-                <button type="button" class="btn btn-negative" @click="closeNotSaving(product)">Fechar</button>
+                <Center>
+                    <button class="btn btn-positive icon icon-check" @click="productStoreOrUpdate" type="button"> Salvar</button>
+                    <button class="btn btn-negative icon icon-cancel" @click="closeNotSaving(product)" type="button"> Fechar</button>
+                </Center>
             </form>
         </div>
     </div>

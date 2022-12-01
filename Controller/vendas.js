@@ -9,24 +9,54 @@ let vendas = db.getCollection('vendas')
 let clientes = db.getCollection('Clientes')
 let produtos = db.getCollection('produtos')
 let nOldQtdSold = 1
+let sOldNomeCliente = ''
+let sOldNomeProduto = ''
 
 const Swal = require('sweetalert2')
 
 db.save() // Salva o arquivo JSON
 
 class Vendas {
-    constructor(model, sNomeClienteOld, sNomeProdutoOld, nQtdVendidaOld, nPrecoVendidoOld) {
+    constructor(model, nOldQtdSold, sOldNomeCliente, sOldNomeProduto) {
         this.model = model;
-        this.sNomeClienteOld = sNomeClienteOld;
-        this.sNomeProdutoOld = sNomeProdutoOld;
-        this.nQtdVendidaOld = nQtdVendidaOld;
-        this.nPrecoVendidoOld = nPrecoVendidoOld;
+        this.nOldQtdSold = nOldQtdSold;
+        this.sOldNomeCliente = sOldNomeCliente;
+        this.sOldNomeProduto = sOldNomeProduto;
     }
 
     /**
-     * @param {*} oResult 
+     * @private
+     * @param {Object} oSale 
      */
-    _sweetAlert(oResult){
+    _setCreateSale(oSale) {
+        vendas.insert(oSale)
+    }
+
+    /**
+     * @private
+     * @param {Object} oSale 
+     */
+    _setUpdateSale(oSale) {
+        vendas.update(oSale)
+    }
+
+    /**
+     * @private
+     * @param {Object} oSale 
+     * @returns @type {Object}
+     */
+    _defineValoresAntigos(oSale) {
+        oSale.qtd = this.nOldQtdSold
+        oSale.cliente = this.sOldNomeCliente
+        oSale.produto = this.sOldNomeProduto
+        return oSale
+    }
+
+    /**
+     * @public
+     * @param {Object} oResult 
+     */
+    sweetAlert(oResult){
         Swal.fire({
             title: oResult.title,
             text: oResult.text,
@@ -35,165 +65,130 @@ class Vendas {
         })
     }
 
-    /* _validaNovaVenda(oSale, oProdutoSold, modo) {
-        let oResult = {
-            title: '',
-            text: '',
-            icon: '',
-            confirmButtonText: '',
-            result: false
-        }
-
-        oResult.result = true
-
-        return oResult
-
-
-        
-
-    } */
-
     /**
-     * @param {String} mode 
-     * @returns @type {Object}
+     * @public
+     * @param {Object} oSale 
+     * @returns  @type {Object}
      */
-    /* _updateValoresAntigos(mode){
-        let oVendaOld = {
-            cliente: '',
-            produto: '',
-            preco: '',
-            qtd: '',
-            modo: ''
-        }
-
+    validaNovaVenda(oSale) {
         let oResult = {
             title: '',
             text: '',
             icon: '',
             confirmButtonText: '',
-            result: false
+            result: true
         }
 
-        if (mode == 'edicao') {
-            oResult.title = 'Erro ao atualizar a venda'
-            oResult.text = 'Não foi possível atualizar a venda!'
+        if (oSale.cliente == '' || oSale.produto == '' || oSale.qtd == '' || oSale.modo == '') {
+            oResult.title = 'Erro'
+            oResult.text = 'Porfavor preencha todos os campos'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false   
+
+        } else if (oSale.qtd <= 0) {
+            oResult.title = 'Erro ao editar a venda'
+            oResult.text = `A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
-
-            oVendaOld = {
-                cliente: this.sOldNomeClienteOld,
-                produto: this.sOldNomeProdutoOld,
-                preco: this.nOldPrecoVendidoOld,
-                qtd: this.nQtdSoldOld,
-                modo: ''
-            }            
-        } else {
-            oResult.title = 'Erro ao cadastrar a venda'
-            oResult.text = 'Não foi possível cadastrar a venda!'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-
-            oVendaOld = {
-                cliente: this.sNomeClienteOld,
-                produto: this.sNomeProdutoOld,
-                preco: this.nPrecoVendidoOld,
-                qtd: this.nQtdVendidaOld,
-                modo: ''
-            }
         }
-        this._sweetAlert(oResult);
-        return oVendaOld;
-    } */
+
+        return oResult        
+    }
+
+
+ 
 
     /**
-     * @param {*} oSale 
-     * @param {*} oProdutoSold 
+     * @public
+     * @param {Object} oSale 
+     * @param {Object} oProdutoSold 
      * @returns 
      */
-    /* _createSale(oSale, oProdutoSold) {
-        let oResult = {
-            title: '',
-            text: '',
-            icon: '',
-            confirmButtonText: '',
-            result: false
-        }
-
+    validaCreateSale(oSale, oProdutoSold) {
+        let oResult = {}
         oSale.preco = oProdutoSold.preco  // Atualiza o preço do produto
 
         // Se a quantidade de produtos disponíveis for maior que a quantidade de produtos vendidos
         if ((oProdutoSold.qtd - oSale.qtd) > -1){
             oProdutoSold.qtd -= oSale.qtd
 
-            oResult.title = 'Venda cadastrada com sucesso!'
+            oResult.title = 'Venda Cadastrada'
             oResult.text = 'A venda foi cadastrada com sucesso!'
             oResult.icon = 'success'
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
+
         } else if (oProdutoSold.qtd < 0){ 
             oResult.title = 'Erro ao cadastrar a venda'
             oResult.text = 'Este produto se encontra fora de estoque!'
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
-        } else{
+
+        } else if (oProdutoSold.qtd < oSale.qtd) {
             oResult.title = 'Erro ao cadastrar a venda'
             oResult.text = `Há apenas ${oProdutoSold.qtd} unidades deste produto em estoque!`
             oResult.icon = 'error'
             oResult.confirmButtonText = 'Ok'
             oResult.result = false
-        }
 
-        this._sweetAlert(oResult);
-        return oResult;
-    } */
-
-    /**
-     * @param {*} saleAux
-     * @param {*} nOldQtdSold
-     * @returns
-     */
-    /*_updateSale(oSale, nOldQtdSold) {
-         if (oSale.qtd != nOldQtdSold) { // Se foi alterado
-            let difQtdSold = oSale.qtd - nOldQtdSold; // diferença entre a atual quantidade vendida e a anterior
-            let produtoTotQtd = produtos.find({ nome: oSale.produto })[0];
-            let auxProdTotQtd = produtoTotQtd.qtd;
-            let auxQtdSoldOld = nOldQtdSold;
-
-            let oResult = {
-                title: '',
-                text: '',
-                icon: '',
-                confirmButtonText: '',
-                result: false
-            }
-
-            oResult.title = 'Venda atualizada com sucesso!'
-            oResult.text = 'A venda foi atualizada com sucesso!'
+        } else {
+            oResult.title = 'Venda Cadastrada'
+            oResult.text = 'A venda foi cadastrada com sucesso!'
             oResult.icon = 'success'
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
+        }
+        this.sweetAlert(oResult);
+
+        if (oResult.result) {
+            this._setCreateSale(oSale)
+        }
+    }
+
+    /**
+     * @public
+     * @param {Object} oSale
+     * @param {Object} oProdutoSold
+     * @param {Number} nOldQtdSold
+     * @returns
+     */
+    validaUpdateSale(oSale, oProdutoSold ,nOldQtdSold) {
+        let oResult = {
+            title: 'Venda Editada',
+            text: 'A venda foi editada com sucesso!',
+            icon: 'success',
+            confirmButtonText: 'Ok',
+            result: true
+        }
+
+        if (oSale.qtd != nOldQtdSold) { // Se foi alterado
+            let difQtdSold = oSale.qtd - nOldQtdSold; // diferença entre a atual quantidade vendida e a anterior
+            let auxProdTotQtd = oProdutoSold.qtd;
+            let auxQtdSoldOld = nOldQtdSold;
 
             // Se aquantidade de produtos vendidos for maior que a quantidade de produtos disponíveis
-            if (parseInt(auxProdTotQtd - oSale.qtd) <= 0) {
-                oResult.title = 'Erro ao cadastrar a venda'
-                oResult.text = `Há apenas ${auxQtdSoldOld} unidades deste produto em estoque!`
+            if (parseInt(auxQtdSoldOld - oSale.qtd) <= 0) {
+                oResult.title = 'Erro ao editar a venda'
+                oResult.text = `Há apenas ${auxProdTotQtd} unidades deste produto em estoque!`
                 oResult.icon = 'error'
                 oResult.confirmButtonText = 'Ok'
                 oResult.result = false
 
                 oSale.qtd = nOldQtdSold;
+                oSale = this._defineValoresAntigos(oSale)
 
             } else if (oSale.qtd <= 0) {// Se a quantidade de produtos vendidos for menor ou igual a 0
-                oResult.title = 'Erro ao cadastrar a venda'
+                oResult.title = 'Erro ao editar a venda'
                 oResult.text = `A quantidade de produtos vendidos não podem ser menores ou iguais a zero!`
                 oResult.icon = 'error'
                 oResult.confirmButtonText = 'Ok'
                 oResult.result = false
 
                 oSale.qtd = nOldQtdSold;
+                oSale = this._defineValoresAntigos(oSale)
 
             } else if (oSale.qtd >= nOldQtdSold) {
                 auxProdTotQtd -= difQtdSold;
@@ -201,12 +196,15 @@ class Vendas {
             } else if (0 < oSale.qtd < nOldQtdSold) {
                 auxProdTotQtd += difQtdSold * -1;
             }
-            produtoTotQtd.qtd = parseInt(auxProdTotQtd); // Atualiza a quantidade de produtos disponíveis
+            oProdutoSold.qtd = parseInt(auxProdTotQtd); // Atualiza a quantidade de produtos disponíveis
     
-            this._sweetAlert(oResult);
+            this.sweetAlert(oResult);
         }
-        return oResult;
-    } */
+        
+        if (oResult.result) {
+            this._setUpdateSale(oSale)
+        }
+    } 
 }
 
 new Vue({
@@ -238,11 +236,9 @@ new Vue({
             this.sale = sale
             oldQtdAval = 
 
-            nOldQtdSold = this.sale.qtd
-            sOldNomeCliente = this.sale.cliente
-            sOldNomeProduto = this.sale.produto
-            nOldPrecoVendido = this.sale.preco
-
+            nOldQtdSold = this.sale.qtd;
+            sOldNomeCliente = this.sale.cliente;
+            sOldNomeProduto = this.sale.produto;
         },
         createSale: function () {
             this.mode = 'cadastro'
@@ -256,34 +252,22 @@ new Vue({
             }
         },
         saleStoreOrUpdate: function () {
-            /* let oSale = this.sale
+            let oSale = this.sale
             let oProdutoSold = produtos.find({ nome: this.sale.produto })[0]
-            let vendas = new Vendas(this, sOldNomeCliente, sOldNomeProduto,  nOldQtdSold, nOldPrecoVendido)
-            let oResult = vendas._validaNovaVenda(oSale, oProdutoSold, this.mode)
+            let vendasClass = new Vendas(this, nOldQtdSold, sOldNomeCliente, sOldNomeProduto)
+            let oResult = vendasClass.validaNovaVenda(oSale, oProdutoSold, this.mode)
             this.openModal = false
-
+            
             if (oResult.result) {
-                if (this.mode == 'cadastro') { // Cadastro
-                    let rRetorno = vendas._createSale(oSale, oProdutoSold)
-                    if (rRetorno.result) { 
-                        vendas.insert(oSale)
-                    }
-                    
-                } else { // Edição
-                    let rRetorno = vendas._updateSale(oSale, nOldQtdSold)
-
-                    if (rRetorno.result) {
-                        vendas.update(oSale)
-                    } else {
-                        let oVendaOld = vendas._updateValoresAntigos(this.mode)
-                        vendas.update(oVendaOld)
-                    }
+                if (this.mode === 'cadastro') {
+                    vendasClass.validaCreateSale(oSale, oProdutoSold) 
+                } else {
+                    vendasClass.validaUpdateSale(oSale, oProdutoSold, nOldQtdSold)
                 }
             } else {
-                let oVendaOld = vendas._updateValoresAntigos(this.mode)
-                vendas.update(oVendaOld)
+                sweetAlert(oResult)
             }
-            db.save() */
+            db.save()
         },
         closeNotSaving(sale){
             this.sale.qtd = nOldQtdSold 

@@ -29,69 +29,8 @@ class Clientes {
     }
 
     /**
-     * @param {*} oCliente 
-     * @returns
-     */
-    _validarCadastro(oCliente, sModo) {
-        let sClienteNome = oCliente.nome
-        let nClienteTel = oCliente.telefone
-        let sMode = sModo === "cadastro" ? 'cadastrar' : 'editar'
-        let oResult = {
-            title: '',
-            text: '',
-            icon: '',
-            confirmButtonText: '',
-            result: false
-        }
-
-        if ((sClienteNome == '' || sClienteNome == null ) || (nClienteTel == '' || nClienteTel == null) ||
-            (oCliente.cpf == '' || oCliente.cpf == null)) { 
-            oResult.title = `Erro ao ${sMode} o cliente`
-            oResult.text = 'Todos os campos devem estar preenchidos'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-
-        } else if (this._validaNome(oCliente.nome) == false) {
-            oResult.title = `Erro ao ${sMode} o cliente`
-            oResult.text = 'Nome inválido'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-
-        } else if (this._validarCpf(oCliente.cpf) == false) {
-            oResult.title = `Erro ao ${sMode} o cliente`
-            oResult.text = 'CPF inválido'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-
-        } else if (this._validarCpfDuplicado(oCliente.cpf, sMode) == false) {
-            oResult.title = `Erro ao ${sMode} o cliente`
-            oResult.text = 'CPF já cadastrado'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-            
-        } else if (this._validarTelefone(oCliente.telefone) == false) {
-            oResult.title = `Erro ao ${sMode} o cliente`
-            oResult.text = 'Telefone inválido'
-            oResult.icon = 'error'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = false
-
-        } else {
-            oResult.title = 'Sucesso'
-            oResult.text = `Cliente ${sClienteNome} ${sMode === 'cadastrar' ? 'cadastrado' : 'editado'} com sucesso`
-            oResult.icon = 'success'
-            oResult.confirmButtonText = 'Ok'
-            oResult.result = true
-        }
-        return oResult
-    }  
-
-    /**
-     * @param {*} sNome 
+     * @private
+     * @param {String} sNome 
      * @returns 
      */
     _validaNome(sNome) {
@@ -99,18 +38,20 @@ class Clientes {
     }
 
     /**
-     * @param {*} sTelefone 
+     * @private
+     * @param {String} sTelefone 
      * @returns 
     */
-    _validarTelefone(sTelefone) {
+    _validaTelefone(sTelefone) {
         return sTelefone.replace(/[^0-9]/g, "") == sTelefone ? true : false;
     }
 
     /**
-     * @param {*} sCpf 
+     * @private
+     * @param {String} sCpf 
      * @returns 
      */
-    _validarCpf(sCpf) {
+    _validaCpf(sCpf) {
         let soma = 0;
         let resto;
 
@@ -139,10 +80,12 @@ class Clientes {
     }
 
     /**
-     * @param {*} sCpf 
+     * @private
+     * @param {String} sCpf 
+     * @param {String} sMode 
      * @returns 
      */
-    _validarCpfDuplicado(sCpf, sMode) {
+    _validaCpfDuplicado(sCpf, sMode) {
         let sClienteCpf = clientes.find({ cpf: sCpf })
 
         if (sClienteCpf.length <= 0) {
@@ -158,6 +101,69 @@ class Clientes {
         }
         
     }
+
+    /**
+     * @public
+     * @param {Object} oCliente 
+     * @returns
+    */
+    validaCadastro(oCliente, sModo) {
+        let sClienteNome = oCliente.nome
+        let nClienteTel = oCliente.telefone
+        let sMode = sModo === "cadastro" ? 'cadastrar' : 'editar'
+        let oResult = {
+            title: '',
+            text: '',
+            icon: '',
+            confirmButtonText: '',
+            result: false
+        }
+
+        if ((sClienteNome == '' || sClienteNome == null ) || (nClienteTel == '' || nClienteTel == null) ||
+            (oCliente.cpf == '' || oCliente.cpf == null)) { 
+            oResult.title = `Erro ao ${sMode} o cliente`
+            oResult.text = 'Todos os campos devem estar preenchidos'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validaNome(oCliente.nome) == false) {
+            oResult.title = `Erro ao ${sMode} o cliente`
+            oResult.text = 'Nome inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validaCpf(oCliente.cpf) == false) {
+            oResult.title = `Erro ao ${sMode} o cliente`
+            oResult.text = 'CPF inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else if (this._validaCpfDuplicado(oCliente.cpf, sMode) == false) {
+            oResult.title = `Erro ao ${sMode} o cliente`
+            oResult.text = 'CPF já cadastrado'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+            
+        } else if (this._validaTelefone(oCliente.telefone) == false) {
+            oResult.title = `Erro ao ${sMode} o cliente`
+            oResult.text = 'Telefone inválido'
+            oResult.icon = 'error'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = false
+
+        } else {
+            oResult.title = 'Sucesso'
+            oResult.text = `Cliente ${sClienteNome} ${sMode === 'cadastrar' ? 'cadastrado' : 'editado'} com sucesso`
+            oResult.icon = 'success'
+            oResult.confirmButtonText = 'Ok'
+            oResult.result = true
+        }
+        return oResult
+    }  
 }
 
 new Vue({
@@ -199,7 +205,7 @@ new Vue({
         clientStoreOrUpdate: function () {
             let clienteClass = new Clientes(this)
             let oCliente = this.client
-            let oResult = clienteClass._validarCadastro(oCliente, this.mode)
+            let oResult = clienteClass.validaCadastro(oCliente, this.mode)
             this.openModal = false
 
             Swal.fire({
