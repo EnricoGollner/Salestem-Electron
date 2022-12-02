@@ -79,11 +79,11 @@
                 </div>
                 <div class="form-group">
                     <label>Insira o CPF:</label>
-                    <input type="text" oninput="_mascaraCpf(this)" class="form-control" id="cpf" v-model="client.cpf" placeholder="Digite aqui o CPF">
+                    <input type="text" oninput="_mascaraCpf(this)" class="form-control" id="cpf" v-model="client.cpf" placeholder="Ex 000.000.000-00">
                 </div>
                 <div class="form-group">
                     <label>Insira o Telefone:</label>
-                    <input type="text" oninput="_mascaraTel(this)" class="form-control" id="telefone" v-model="client.telefone" placeholder="Digite aqui o Telefone">
+                    <input type="text" oninput="_mascaraTel(this)" class="form-control" id="telefone" v-model="client.telefone" placeholder="Ex (00) 00000-0000">
                 </div>
                 <Center>
                     <button class="btn btn-positive icon icon-check" @click="clientStoreOrUpdate" type="button"> Salvar</button>

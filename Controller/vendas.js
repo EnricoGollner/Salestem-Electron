@@ -11,6 +11,7 @@ let produtos = db.getCollection('produtos')
 let nOldQtdSold = 1
 let sOldNomeCliente = ''
 let sOldNomeProduto = ''
+let testeDoTrem = ''
 
 const Swal = require('sweetalert2')
 
@@ -169,8 +170,25 @@ class Vendas {
             let auxProdTotQtd = oProdutoSold.qtd;
             let auxQtdSoldOld = nOldQtdSold;
 
-            // Se aquantidade de produtos vendidos for maior que a quantidade de produtos disponíveis
-            if (parseInt(auxQtdSoldOld - oSale.qtd) <= 0) {
+            // Se a quantidade do estoque for 0 
+            if (oProdutoSold.qtd == 0) { 
+                if (difQtdSold < 0) { // Se a diferença for menor que 0 = quantidade vendida diminuida
+                    auxProdTotQtd = (difQtdSold * -1); // Transforma a diferença em positivo
+
+                    oProdutoSold.qtd += parseInt(difQtdSold);
+                } else { // Se a diferença for maior que zero = quantidade vendida aumentou
+                    
+                    oResult.title = 'Erro ao editar a venda'
+                    oResult.text = 'Este produto se encontra fora de estoque!'
+                    oResult.icon = 'error'
+                    oResult.confirmButtonText = 'Ok'
+                    oResult.result = false
+    
+                    oSale.qtd = nOldQtdSold;
+                    oSale = this._defineValoresAntigos(oSale)
+                }
+
+            } else if (parseInt(auxProdTotQtd - oSale.qtd) < 0) {  // Se aquantidade de produtos vendidos for maior que a quantidade de produtos disponíveis
                 oResult.title = 'Erro ao editar a venda'
                 oResult.text = `Há apenas ${auxProdTotQtd} unidades deste produto em estoque!`
                 oResult.icon = 'error'
@@ -254,6 +272,11 @@ new Vue({
         saleStoreOrUpdate: function () {
             let oSale = this.sale
             let oProdutoSold = produtos.find({ nome: this.sale.produto })[0]
+
+            if (this.mode == 'cadastro') {
+                testeDoTrem = oProdutoSold.qtd
+            }
+
             let vendasClass = new Vendas(this, nOldQtdSold, sOldNomeCliente, sOldNomeProduto)
             let oResult = vendasClass.validaNovaVenda(oSale, oProdutoSold, this.mode)
             this.openModal = false
