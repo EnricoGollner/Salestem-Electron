@@ -26,21 +26,36 @@ window.Vue = require('vue')
 let clientes = db.getCollection('Clientes')
 
 /**
- * @function
  * @private
  * @param {Object} oCpf 
  */
-function _mascaraCpf(oCpf) {
+const _mascaraCpf = (oCpf) => {
     let sCpfValue = oCpf.value;
 
     if (isNaN(sCpfValue[sCpfValue.length - 1])) {
-        oCpf.value = sCpfValue.substring(0, cpfValue.length - 1);
+        oCpf.value = sCpfValue.substring(0, sCpfValue.length - 1);
         return;
     }
 
     oCpf.setAttribute("maxlength", "14");
     if (sCpfValue.length == 3 || sCpfValue.length == 7) oCpf.value += ".";
     if (sCpfValue.length == 11) oCpf.value += "-";
+}
+
+/**
+ * @private
+ * @param {Object} oTel 
+ */
+const _mascaraTel = (oTel) => {
+    let sTelNumber = oTel.value;
+
+    if (!sTelNumber) return ""
+
+    oTel.setAttribute("maxlength", "15");
+    sTelNumber = sTelNumber.replace(/\D/g, "");
+    sTelNumber = sTelNumber.replace(/^(\d{2})(\d)/g, "($1) $2");
+    sTelNumber = sTelNumber.replace(/(\d)(\d{4})$/, "$1-$2");
+    oTel.value = sTelNumber;
 }
 
 class Clientes {
@@ -67,7 +82,11 @@ class Clientes {
      * @returns 
     */
     _validaTelefone(sTelefone) {
-        return sTelefone.replace(/[^0-9]/g, "") == sTelefone ? true : false;
+        // regex para remover os parênteses, o hífen e o espaço
+        let removeMascara = /[()-\s]/g;
+        let sTelefoneSemMascara = sTelefone.replace(removeMascara, "");
+        
+        return sTelefoneSemMascara.replace(/[^0-9]/g, "") == sTelefoneSemMascara ? true : false;
     }
 
     /**
@@ -289,18 +308,19 @@ new Vue({
 
             if (oRetorno.oSwal.result) {
                 if (this.mode == 'cadastro') {
-                    //oRetorno.cliente.nome = clienteClass._formataNomeCliente(oRetorno.cliente.nome)
                     clientes.insert(oRetorno.cliente);
                 } else {
                     clientes.update(oRetorno.cliente);
                 }
                 db.save()
             } else {
-                oCliente.nome = sClienteNomeOld
-                oCliente.cpf = sClienteCpfOld
-                oCliente.telefone = sClienteTelOld
-                clientes.update(oCliente)
-                db.save()
+                if(this.mode == 'edicao'){
+                    oCliente.nome = sClienteNomeOld
+                    oCliente.cpf = sClienteCpfOld
+                    oCliente.telefone = sClienteTelOld
+                    clientes.update(oCliente)
+                    db.save()
+                }
             }
         }
     }
