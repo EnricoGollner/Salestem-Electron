@@ -76,17 +76,28 @@ class Clientes {
         return sNome.replace(/[^a-zA-ZÀ-ú ]/g, "") == sNome ? true : false;
     }
 
+    _formataCpf(sCpf) {
+        return sCpf.replace(/[.-\s]/g, "");
+    }
+
+    /**
+     * @private
+     * @param {String} sTelefone 
+     * @returns 
+     */
+    _formataTelNumber(sTelefone) {
+        return sTelefone.replace(/[()-\s]/g, "");
+    }
+
     /**
      * @private
      * @param {String} sTelefone 
      * @returns 
     */
     _validaTelefone(sTelefone) {
-        // regex para remover os parênteses, o hífen e o espaço
-        let removeMascara = /[()-\s]/g;
-        let sTelefoneSemMascara = sTelefone.replace(removeMascara, "");
+        let sTelefoneNew = this._formataTelNumber(sTelefone);
         
-        return sTelefoneSemMascara.replace(/[^0-9]/g, "") == sTelefoneSemMascara ? true : false;
+        return sTelefoneNew.replace(/[^0-9]/g, "") == sTelefoneNew ? true : false;
     }
 
     /**
@@ -98,8 +109,7 @@ class Clientes {
         let soma = 0;
         let resto;
         let regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-        let removeMascara = /[.-]/g;
-        let sCpfSemMascara = sCpf.replace(removeMascara, "");
+        let sCpfSemMascara = this._formataCpf(sCpf);
 
         if (regex.test(sCpfSemMascara)) {
             return false;
@@ -316,7 +326,7 @@ new Vue({
             } else {
                 if(this.mode == 'edicao'){
                     oCliente.nome = sClienteNomeOld
-                    oCliente.cpf = sClienteCpfOld
+                    oCliente.cpf = clienteClass._
                     oCliente.telefone = sClienteTelOld
                     clientes.update(oCliente)
                     db.save()

@@ -9,9 +9,32 @@ window.Vue = require('vue')
 // Alertas - Swal.js
 const Swal = require('sweetalert2')
 
+/**
+ * @private
+ * @param {Object} oPreco 
+ */
+const _mascaraPreco = (oPreco) => {
+    var sPrecoValue = oPreco.value;
+
+    sPrecoValue = sPrecoValue + '';
+    sPrecoValue = parseInt(sPrecoValue.replace(/[\D]+/g, ''));
+    sPrecoValue = sPrecoValue + '';
+    sPrecoValue = sPrecoValue.replace(/([0-9]{2})$/g, ",$1");
+
+    if (sPrecoValue.length > 6) {
+        sPrecoValue = sPrecoValue.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+    }
+
+    oPreco.value = `R$ ${sPrecoValue}`;
+    if(sPrecoValue == 'NaN') oPreco.value = '';
+}
+
 let produtos = db.getCollection('produtos')
 
-let oldQtdAval = 1
+let oldQtdAval = 1,
+    sProdutoNomeOld = '',
+    nProdutoPrecoOld = '',
+    nProdutoQtdOld = '';
 
 class Produtos {
     constructor(model) {
@@ -31,13 +54,20 @@ class Produtos {
         return regex.test(sProdutoNome) != true ? true : false;
     }
 
+    _formataPreco(nProdutoPreco) {
+        // remove o R$ e a vírgula // substitui a vírgula por ponto
+        return nProdutoPreco.replace(/[^0-9,]/g, "").replace(/,/g, ".");
+    }
+
     /**
      * @private
      * @param {Number} nProdutoPreco 
      * @returns
      */
     _validaPrecoProd(nProdutoPreco) {
-        return nProdutoPreco.replace(/[^0-9.]/g, "") == nProdutoPreco ? true : false;
+        let nProdutoPrecoNew = this._formataPreco(nProdutoPreco);
+
+        return nProdutoPrecoNew.replace(/[^0-9.]/g, "") == nProdutoPrecoNew ? true : false;
     }
 
     /**
@@ -116,8 +146,16 @@ class Produtos {
             oResult.icon = 'success'
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
+
+            oProduto.preco = this._formataPreco(nProdutoPreco)
         }
-        return oResult;
+
+        let oRetorno = {
+            oSwal: oResult,
+            produto: oProduto
+        }
+
+        return oRetorno;
     }
 }
 
@@ -161,24 +199,27 @@ new Vue({
         productStoreOrUpdate: function () {
             let produtoClass = new Produtos(this)
             let oProduto = this.product
-            let oResult = produtoClass.validaCadastroProduto(oProduto, this.mode)
+            let oRetorno = produtoClass.validaCadastroProduto(oProduto, this.mode)
 
             this.openModal = false
-            produtoClass.sweetAlert(oResult)
+            produtoClass.sweetAlert(oRetorno.oSwal)
 
-            if (oResult.result == true) {
+            if (oRetorno.oSwal.result) {
                 if (this.mode == 'cadastro') {
-                    produtos.insert(oProduto)
+                    produtos.insert(oRetorno.produto)
                 } else {
-                    produtos.update(oProduto)
+                    produtos.update(oRetorno.produto)
                 }
                 db.save()
             } else {
-                oProduto.nome = sProdutoNomeOld
-                oProduto.preco = nProdutoPrecoOld
-                oProduto.qtd = nProdutoQtdOld
-                produtos.update(oProduto)
-                db.save()
+
+                if(this.mode == 'edicao'){
+                    oProduto.nome = sProdutoNomeOld
+                    oProduto.preco = produtoClass._formataPreco(nProdutoPrecoOld)
+                    oProduto.qtd = nProdutoQtdOld
+                    produtos.update(oProduto)
+                    db.save()
+                }
             }
         },
         closeNotSaving(product){
