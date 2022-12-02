@@ -25,10 +25,31 @@ window.Vue = require('vue')
 // Definindo o banco de dados de Clientes
 let clientes = db.getCollection('Clientes')
 
+/**
+ * @function
+ * @private
+ * @param {Object} oCpf 
+ */
+function _mascaraCpf(oCpf) {
+    let sCpfValue = oCpf.value;
+
+    if (isNaN(sCpfValue[sCpfValue.length - 1])) {
+        oCpf.value = sCpfValue.substring(0, cpfValue.length - 1);
+        return;
+    }
+
+    oCpf.setAttribute("maxlength", "14");
+    if (sCpfValue.length == 3 || sCpfValue.length == 7) oCpf.value += ".";
+    if (sCpfValue.length == 11) oCpf.value += "-";
+}
+
 class Clientes {
-    constructor(model) {
+    constructor(model, cliente) {
         this.model = model;
-        this.clientes = this.clientes;
+        this.clientes = cliente;
+        this.sClienteNomeNew = this.clientes.nome;
+        this.sClienteCpfNew = this.clientes.cpf;
+        this.sClienteTelNew = this.clientes.telefone;
     }
 
     /**
@@ -58,27 +79,29 @@ class Clientes {
         let soma = 0;
         let resto;
         let regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        let removeMascara = /[.-]/g;
+        let sCpfSemMascara = sCpf.replace(removeMascara, "");
 
-        if (regex.test(sCpf)) {
+        if (regex.test(sCpfSemMascara)) {
             return false;
 
         } else {
-            if (sCpf == "00000000000") return false;
+            if (sCpfSemMascara == "00000000000") return false;
 
             for (var i = 1; i <= 9; i++)
-                soma = soma + parseInt(sCpf.substring(i - 1, i)) * (11 - i);
+                soma = soma + parseInt(sCpfSemMascara.substring(i - 1, i)) * (11 - i);
             resto = (soma * 10) % 11;
 
             if (resto == 10 || resto == 11) resto = 0;
-            if (resto != parseInt(sCpf.substring(9, 10))) return false;
+            if (resto != parseInt(sCpfSemMascara.substring(9, 10))) return false;
 
             soma = 0;
             for (i = 1; i <= 10; i++)
-                soma = soma + parseInt(sCpf.substring(i - 1, i)) * (12 - i);
+                soma = soma + parseInt(sCpfSemMascara.substring(i - 1, i)) * (12 - i);
             resto = (soma * 10) % 11;
 
             if (resto == 10 || resto == 11) resto = 0;
-            if (resto != parseInt(sCpf.substring(10, 11))) return false;
+            if (resto != parseInt(sCpfSemMascara.substring(10, 11))) return false;
             return true;
         }
     }
@@ -106,6 +129,14 @@ class Clientes {
         
     }
 
+    _formataNomeCliente(sNome) {
+        return sNome.toLowerCase()
+		.split(' ')
+		.map((word) => {
+			return word[0].toUpperCase() + word.slice(1);
+		}).join(' ')
+    }
+
     /**
      * @public
      * @param {Object} oResult 
@@ -119,13 +150,33 @@ class Clientes {
         })
     }
 
+    cadastrarCliente() {
+        let oClienteNew = {
+            nome: this._formataNomeCliente(this.sClienteNomeNew),
+            cpf: this.sClienteCpfNew,
+            telefone: this.sClienteTelNew
+        }
+        return oClienteNew;
+    }
+
+    editarCliente() {
+        let oClienteNew = {
+            nome: this._formataNomeCliente(this.sClienteNomeNew),
+            cpf: this.sClienteCpfNew,
+            telefone: this.sClienteTelNew
+        }
+        return oClienteNew;
+    }
+
+
     /**
      * @public
      * @param {Object} oCliente 
      * @returns
     */
     validaCadastro(oCliente, sModo) {
-        let sClienteNome = oCliente.nome
+        let sClienteNomeAux = oCliente.nome
+        let sClienteNome = sClienteNomeAux.replace(/\s/g, '');
         let nClienteTel = oCliente.telefone
         let sMode = sModo === "cadastro" ? 'cadastrar' : 'editar'
         let oResult = {
@@ -174,12 +225,21 @@ class Clientes {
 
         } else {
             oResult.title = 'Sucesso'
-            oResult.text = `Cliente ${sClienteNome} ${sMode === 'cadastrar' ? 'cadastrado' : 'editado'} com sucesso`
+            oResult.text = `O cliente foi ${sMode === 'cadastrar' ? 'cadastrado' : 'editado'} com sucesso`
             oResult.icon = 'success'
             oResult.confirmButtonText = 'Ok'
             oResult.result = true
+
+            oCliente.nome = this._formataNomeCliente(oCliente.nome);
         }
-        return oResult
+
+        // variável para retornar um objeto com os dois objetos
+        let oRetorno = {
+            oSwal: oResult,
+            cliente: oCliente
+        }
+
+        return oRetorno;
     }  
 }
 
@@ -220,18 +280,19 @@ new Vue({
             }
         },
         clientStoreOrUpdate: function () {
-            let clienteClass = new Clientes(this)
             let oCliente = this.client
-            let oResult = clienteClass.validaCadastro(oCliente, this.mode)
+            let clienteClass = new Clientes(this, this.client)
+            let oRetorno = clienteClass.validaCadastro(oCliente, this.mode)
             this.openModal = false
 
-            clienteClass.sweetAlert(oResult)
+            clienteClass.sweetAlert(oRetorno.oSwal)
 
-            if (oResult.result) {
+            if (oRetorno.oSwal.result) {
                 if (this.mode == 'cadastro') {
-                    clientes.insert(oCliente)
+                    //oRetorno.cliente.nome = clienteClass._formataNomeCliente(oRetorno.cliente.nome)
+                    clientes.insert(oRetorno.cliente);
                 } else {
-                    clientes.update(oCliente)
+                    clientes.update(oRetorno.cliente);
                 }
                 db.save()
             } else {

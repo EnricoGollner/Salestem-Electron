@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "file-exists": "^2.0.0",
+    "jquery": "^3.6.1",
     "lokijs": "1.4",
     "read-file-utf8": "^1.1.1",
     "sweetalert2": "^11.6.15",
