@@ -4,8 +4,8 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron .", 
-    "buildMac": "electron-packager ../Salestem-Electron SaleStem --platform=darwin --arch=arm64", 
+    "start": "electron .",
+    "buildMac": "electron-packager ../Salestem-Electron SaleStem --platform=darwin --arch=arm64",
     "buildWin": "electron-packager ../Salestem-Electron SaleStem --platform=win32 --arch=x64"
   },
   "repository": "https://github.com/electron/electron-quick-start",
@@ -19,7 +19,8 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^20.1.0"
+    "electron": "^20.1.0",
+    "electron-packager": "^17.1.1"
   },
   "dependencies": {
     "file-exists": "^2.0.0",
